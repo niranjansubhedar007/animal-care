@@ -29,7 +29,14 @@ const Slider = () => {
       heading: "Protect Wildlife, Preserve Nature",
       subheading: "Rescuing and rehabilitating wild animals",
       color: "#A294F9"
-    }
+    },
+{
+  image: "/images/bird-1.jpg",
+  heading: "Give Wings to Hope",
+  subheading: "Saving injured birds and helping them soar again",
+  color: "#70B5D9"  // soft blue, represents sky and flight
+}
+
   ];
   
   const slideCount = slides.length;
