@@ -77,7 +77,7 @@ const Slider = () => {
               alt={`Slide ${index}`}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 flex items-center justify-center text-center">
+            <div className="lg:absolute lg:inset-0 flex items-center justify-center text-center">
               <div className="max-w-4xl px-6 py-8 rounded-xl" 
                    style={{ backgroundColor: `${slide.color}CC` }}> {/* CC = 80% opacity */}
                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-4">
@@ -99,7 +99,6 @@ const Slider = () => {
         ))}
       </div>
       
-      {/* Navigation dots */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
         {slides.map((_, index) => (
           <button

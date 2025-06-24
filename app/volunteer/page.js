@@ -77,7 +77,7 @@ export default function Volunteer() {
   return (
     <>
       <Navbar />
-      <div className="font-sans">
+      <div className="font-sans bg-white">
         <div className=" mx-auto">
           <div
             className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
@@ -99,7 +99,7 @@ export default function Volunteer() {
               </p>
             </div>
           </div>
-          <div className="max-w-4xl mx-auto mt-5 grid md:grid-cols-2 gap-8 mb-12">
+          <div className="max-w-4xl mx-auto mt-5 grid md:grid-cols-2 gap-8 mb-12 bg-white">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold text-[#A294F9] mb-4">
                 Why Volunteer With Us?

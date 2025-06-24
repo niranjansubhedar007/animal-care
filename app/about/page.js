@@ -36,7 +36,7 @@ const About = () => {
               className="rounded-lg shadow-xl w-full h-auto"
             />
           </div>
-          <div className="md:w-1/2">
+          <div className="md:w-1/2 bg-white">
             <h2 className="text-3xl font-bold text-[#5E4FA2] mb-6">Our Story</h2>
             <p className="text-lg text-gray-700 mb-6">
               Founded in 2021 in Thane, India by Nisha Pawar, Hope Animals Welfare Foundation emerged from a simple yet powerful vision - to create a compassionate world where no street animal suffers needlessly.
