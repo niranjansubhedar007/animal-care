@@ -36,8 +36,8 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <img
-              src="/images/logo-1.png"
-              className="h-16 w-auto md:h-20"
+              src="/images/logonew.jpg"
+              className="h-10 w-auto md:h-12"
               alt="Animal Rescue Logo"
             />
           </div>

@@ -24,10 +24,10 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Logo and Contact Info */}
           <div className="space-y-4">
-            <div className="flex items-center">
+            <div className="flex items-center justify-center">
             <img
-              src="/images/logo-1.png"
-              className="h-20 w-auto"
+              src="/images/logonew.jpg"
+              className="h-16 w-auto"
               alt="Animal Rescue Logo"
             />
              
