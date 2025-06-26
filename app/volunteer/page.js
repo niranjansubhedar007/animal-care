@@ -99,6 +99,7 @@ export default function Volunteer() {
               </p>
             </div>
           </div>
+          </div>
           <div className="max-w-4xl mx-auto mt-5 grid md:grid-cols-2 gap-8 mb-12 bg-white">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold text-[#A294F9] mb-4">
@@ -356,7 +357,6 @@ export default function Volunteer() {
               </form>
             </div>
           </div>
-        </div>
       </div>
       <Footer />
     </>

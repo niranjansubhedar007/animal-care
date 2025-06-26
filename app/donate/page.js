@@ -7,6 +7,7 @@ import {
   faArrowLeft, faArrowRight
 } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../navbar/page';
+import Footer from '../footer/page';
 
 const Donate = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -449,21 +450,21 @@ const Donate = () => {
               {/* Donation Impact */}
               <div className="bg-[#E5D9F2] p-8 rounded-xl mt-8">
                 <h3 className="text-2xl font-semibold text-[#5E4FA2] mb-4">Your Donation's Impact</h3>
-                <ul className="space-y-3">
+                <ul className="space-y-3 text-[#5E4FA2]">
                   <li className="flex items-start">
-                    <div className="bg-[#A294F9] w-2 h-2 rounded-full mt-2 mr-3"></div>
+                    <div className="bg-[#5E4FA2] w-2 h-2 rounded-full mt-2 mr-3"></div>
                     <span><strong>₹500</strong> - Feeds 10 stray dogs for a week</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-[#A294F9] w-2 h-2 rounded-full mt-2 mr-3"></div>
+                    <div className="bg-[#5E4FA2] w-2 h-2 rounded-full mt-2 mr-3"></div>
                     <span><strong>₹1,000</strong> - Covers vaccination for 5 animals</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-[#A294F9] w-2 h-2 rounded-full mt-2 mr-3"></div>
+                    <div className="bg-[#5E4FA2] w-2 h-2 rounded-full mt-2 mr-3"></div>
                     <span><strong>₹2,500</strong> - Funds one sterilization surgery</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-[#A294F9] w-2 h-2 rounded-full mt-2 mr-3"></div>
+                    <div className="bg-[#5E4FA2] w-2 h-2 rounded-full mt-2 mr-3"></div>
                     <span><strong>₹5,000</strong> - Provides emergency medical care</span>
                   </li>
                 </ul>
@@ -537,6 +538,7 @@ const Donate = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 };
