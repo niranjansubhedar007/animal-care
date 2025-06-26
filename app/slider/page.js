@@ -3,8 +3,21 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+
 const Slider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const slides = [
     {
       image: "/images/dog-hero-1.jpg",
@@ -30,24 +43,24 @@ const Slider = () => {
       subheading: "Rescuing and rehabilitating wild animals",
       color: "#A294F9"
     },
-{
-  image: "/images/bird-1.jpg",
-  heading: "Give Wings to Hope",
-  subheading: "Saving injured birds and helping them soar again",
-  color: "#70B5D9"  // soft blue, represents sky and flight
-}
-
+    {
+      image: "/images/bird-1.jpg",
+      heading: "Give Wings to Hope",
+      subheading: "Saving injured birds and helping them soar again",
+      color: "#70B5D9"
+    }
   ];
   
   const slideCount = slides.length;
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % slideCount);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [slideCount]);
+    if (!isMobile) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % slideCount);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [slideCount, isMobile]);
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) =>
@@ -61,6 +74,46 @@ const Slider = () => {
     );
   };
 
+  if (isMobile) {
+    return (
+      <div className="flex flex-col bg-white mt-20">
+        {slides.map((slide, index) => (
+          <div key={index} className="w-full relative mb-8">
+            <img
+              src={slide.image}
+              alt={`Slide ${index}`}
+              className="w-full h-64 object-cover"
+            />
+            <div className="flex items-center justify-center text-center p-4">
+              <div className="max-w-4xl px-6 py-8 rounded-xl" 
+                   style={{ backgroundColor: `${slide.color}CC` }}>
+                <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                  {slide.heading}
+                </h1>
+                <p className="text-lg text-gray-700">
+                  {slide.subheading}
+                </p>
+              </div>
+              
+            </div>
+            
+          </div>
+        ))}
+        <div className="flex justify-center mt-4">
+           <Link href="volunteer">
+                <button 
+                  className="px-8 py-3 bg-[#A294F9] text-white rounded-full hover:bg-[#8A7BD8] transition duration-300 text-lg font-semibold shadow-lg"
+                >
+                  Join Our Mission
+                </button>
+                </Link>
+
+      </div>
+      </div>
+    );
+  }
+
+  // Desktop view - keep original functionality
   return (
     <div className="relative lg:h-screen md:h-96 h-80 bg-white overflow-hidden mt-20">
       <div
@@ -79,7 +132,7 @@ const Slider = () => {
             />
             <div className="lg:absolute lg:inset-0 flex items-center justify-center text-center">
               <div className="max-w-4xl px-6 py-8 rounded-xl" 
-                   style={{ backgroundColor: `${slide.color}CC` }}> {/* CC = 80% opacity */}
+                   style={{ backgroundColor: `${slide.color}CC` }}>
                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-4">
                   {slide.heading}
                 </h1>

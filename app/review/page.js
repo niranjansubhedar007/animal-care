@@ -311,7 +311,8 @@ export default function ReviewsPage() {
 
         {/* Reviews Slider */}
       </div>
-      <div className="bg-white rounded-lg shadow-md p-6 mx-4 md:mx-10 mb-10">
+      <div className="max-w-7xl mx-auto p-7 bg-white ">
+      <div className="bg-white rounded-lg shadow-md p-6 mx-4 md:mx-10 ">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-[#5E4FA2]">
             What People Say About Us
@@ -473,6 +474,8 @@ export default function ReviewsPage() {
           </p>
         )}
       </div>
+      </div>
+
       <Footer />
     </>
   );

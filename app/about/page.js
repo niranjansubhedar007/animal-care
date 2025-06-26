@@ -27,7 +27,7 @@ const About = () => {
       </div>
 
       {/* Our Story Section */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-6 py-16 bg-white">
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="md:w-1/2">
             <img 

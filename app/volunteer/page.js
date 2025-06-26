@@ -78,7 +78,7 @@ export default function Volunteer() {
     <>
       <Navbar />
       <div className="font-sans bg-white">
-        <div className=" mx-auto">
+        <div className=" mx-auto bg-white">
           <div
             className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
             style={{

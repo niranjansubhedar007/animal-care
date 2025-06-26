@@ -8,6 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../navbar/page';
 import Link from 'next/link';
+import Footer from '../footer/page';
 // Locations in Mumbai/Thane for random selection
 const locations = [
   "Thane Station", "Ghodbunder Road", "Hiranandani Estate", "Kolshet Road", 
@@ -501,6 +502,7 @@ const featuredStories = stories
         </div>
       </div>
     </div>
+    <Footer/>
     </>
   );
 };
