@@ -11,9 +11,11 @@ import {
 import Navbar from "../navbar/page";
 import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 export default function ContactPage() {
- const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
@@ -27,6 +29,38 @@ export default function ContactPage() {
     message: "",
   });
 
+  // Animation controls
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true
+  });
+
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15
+      }
+    }
+  };
+
+  const pulseAnimation = {
+    scale: [1, 1.05, 1],
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -38,7 +72,6 @@ export default function ContactPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
 
     try {
       const { data, error } = await supabase
@@ -79,12 +112,13 @@ export default function ContactPage() {
       setIsSubmitting(false);
     }
   };
+
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-[#F5EFFF]">
-        {/* Hero Section */}
-        <div
+        {/* Hero Section with Animation */}
+        <motion.div
           className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
           style={{
             backgroundImage:
@@ -92,30 +126,64 @@ export default function ContactPage() {
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
         >
-          <div className="text-white px-4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
-            <p className="text-xl md:text-2xl">
+          <motion.div 
+            className="text-white px-4"
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            <motion.h1 
+              className="text-4xl md:text-5xl font-bold mb-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+            >
+              Contact Us
+            </motion.h1>
+            <motion.p 
+              className="text-xl md:text-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+            >
               We'd love to hear from you! Reach out for inquiries, support, or to
               get involved.
-            </p>
-          </div>
-        </div>
+            </motion.p>
+          </motion.div>
+        </motion.div>
 
         {/* Main Content */}
-        <div className="max-w-6xl mx-auto px-4 py-12">
+        <motion.div 
+          className="max-w-6xl mx-auto px-4 py-12"
+          ref={ref}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          variants={staggerContainer}
+        >
           <div className="grid md:grid-cols-2 gap-12">
             {/* Contact Information */}
-            <div>
-              <h2 className="text-3xl font-bold text-[#5E4FA2] mb-6">
+            <motion.div variants={fadeIn}>
+              <motion.h2 
+                className="text-3xl font-bold text-[#5E4FA2] mb-6"
+                whileInView={{ scale: [1, 1.02, 1] }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
                 Get in Touch
-              </h2>
+              </motion.h2>
 
               <div className="space-y-6">
                 {/* Address */}
                 <div className="flex items-start">
-                  <div className="text-[#A294F9] text-xl mt-1 mr-4">
-                    <FontAwesomeIcon icon={faMapMarkerAlt} />
+                  <div className="bg-[#FFEEEE] p-3 rounded-full mr-4">
+                    <FontAwesomeIcon
+                      icon={faMapMarkerAlt}
+                      className="text-[#EF476F] text-xl"
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-[#5E4FA2]">
@@ -126,67 +194,52 @@ export default function ContactPage() {
                       <br />
                       Thane, Maharashtra 400606
                     </p>
-                    <a
-                      href="https://maps.app.goo.gl/im233XmFBbyZQ4S8A?g_st=aw"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#A294F9] hover:underline mt-2 inline-block"
-                    >
-                      View on Google Maps
-                    </a>
                   </div>
                 </div>
 
                 {/* Phone */}
                 <div className="flex items-start">
-                  <div className="text-[#A294F9] text-xl mt-1 mr-4">
-                    <FontAwesomeIcon icon={faPhone} />
+                  <div className="bg-[#E5F9FF] p-3 rounded-full mr-4">
+                    <FontAwesomeIcon
+                      icon={faPhone}
+                      className="text-[#118AB2] text-xl"
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-[#5E4FA2]">
                       Phone Number
                     </h3>
                     <p className="text-[#5E4FA2]/90">
-                      <a
-                        href="tel:+919136263344"
-                        className="hover:text-[#A294F9] transition"
-                      >
-                        +91 9136263344
-                      </a>
-                    </p>
-                    <p className="text-sm text-[#5E4FA2]/80 mt-1">
-                      (Monday to Saturday, 9am to 6pm)
+                      +91 9136263344
                     </p>
                   </div>
                 </div>
 
                 {/* Email */}
                 <div className="flex items-start">
-                  <div className="text-[#A294F9] text-xl mt-1 mr-4">
-                    <FontAwesomeIcon icon={faEnvelope} />
+                  <div className="bg-[#FFF2E5] p-3 rounded-full mr-4">
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      className="text-[#FF9F43] text-xl"
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-[#5E4FA2]">
                       Email Address
                     </h3>
                     <p className="text-[#5E4FA2]/90">
-                      <a
-                        href="mailto:info@hopeanimalcare.in"
-                        className="hover:text-[#A294F9] transition"
-                      >
-                        info@hopeanimalcare.in
-                      </a>
-                    </p>
-                    <p className="text-sm text-[#5E4FA2]/80 mt-1">
-                      For general inquiries
+                      info@hopeanimalcare.in
                     </p>
                   </div>
                 </div>
 
                 {/* Hours */}
                 <div className="flex items-start">
-                  <div className="text-[#A294F9] text-xl mt-1 mr-4">
-                    <FontAwesomeIcon icon={faClock} />
+                  <div className="bg-[#F0FFE5] p-3 rounded-full mr-4">
+                    <FontAwesomeIcon
+                      icon={faClock}
+                      className="text-[#6BCB77] text-xl"
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-[#5E4FA2]">
@@ -196,195 +249,196 @@ export default function ContactPage() {
                       Monday to Saturday: 9:00 AM - 6:00 PM
                     </p>
                     <p className="text-[#5E4FA2]/90">Sunday: Closed</p>
-                    <p className="text-sm text-[#5E4FA2]/80 mt-1">
-                      (Emergency rescues available 24/7)
-                    </p>
                   </div>
                 </div>
-
                 {/* Social Media */}
-                <div className="pt-4">
+                <motion.div 
+                  className="pt-4"
+                  variants={fadeIn}
+                >
                   <h3 className="text-lg font-bold text-[#5E4FA2] mb-3">
                     Connect With Us
                   </h3>
-                  <div className="flex space-x-4">
-                    <a
-                      href="https://www.facebook.com/hopeanimalcare/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-[#E5D9F2] hover:bg-[#CDC1FF] w-10 h-10 rounded-full flex items-center justify-center transition"
-                    >
-                      <span className="sr-only">Facebook</span>
-                      <svg
-                        className="w-5 h-5 text-[#5E4FA2]"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
+                  <motion.div 
+                    className="flex space-x-4"
+                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    transition={{ staggerChildren: 0.1 }}
+                  >
+                    {[
+                      {
+                        href: "https://www.facebook.com/hopeanimalcare/",
+                        icon: (
+                          <svg className="w-5 h-5 text-[#5E4FA2]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+                          </svg>
+                        )
+                      },
+                      {
+                        href: "https://www.instagram.com/hopeanimalcarein/",
+                        icon: (
+                          <svg className="w-5 h-5 text-[#5E4FA2]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                          </svg>
+                        )
+                      },
+                      {
+                        href: "https://www.youtube.com/channel/UC9vVr-l1KtK4P24ILu5hy3A",
+                        icon: (
+                          <svg className="w-5 h-5 text-[#5E4FA2]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                          </svg>
+                        )
+                      }
+                    ].map((social, index) => (
+                      <motion.a
+                        key={index}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-[#E5D9F2] hover:bg-[#CDC1FF] w-10 h-10 rounded-full flex items-center justify-center transition"
+                        variants={fadeIn}
+                        whileHover={{ scale: 1.1, y: -3 }}
                       >
-                        <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
-                      </svg>
-                    </a>
-                    <a
-                      href="https://www.instagram.com/hopeanimalcarein/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-[#E5D9F2] hover:bg-[#CDC1FF] w-10 h-10 rounded-full flex items-center justify-center transition"
-                    >
-                      <span className="sr-only">Instagram</span>
-                      <svg
-                        className="w-5 h-5 text-[#5E4FA2]"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-                      </svg>
-                    </a>
-                    <a
-                      href="https://www.youtube.com/channel/UC9vVr-l1KtK4P24ILu5hy3A"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-[#E5D9F2] hover:bg-[#CDC1FF] w-10 h-10 rounded-full flex items-center justify-center transition"
-                    >
-                      <span className="sr-only">YouTube</span>
-                      <svg
-                        className="w-5 h-5 text-[#5E4FA2]"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
+                        {social.icon}
+                      </motion.a>
+                    ))}
+                  </motion.div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Contact Form */}
-            <div>
-              <h2 className="text-3xl font-bold text-[#5E4FA2] mb-6">
+            <motion.div 
+              variants={fadeIn}
+              whileHover={{ y: -5 }}
+            >
+              <motion.h2 
+                className="text-3xl font-bold text-[#5E4FA2] mb-6"
+                whileInView={{ scale: [1, 1.02, 1] }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
                 Send Us a Message
-              </h2>
+              </motion.h2>
 
               {submitStatus.message && (
-                <div
+                <motion.div
                   className={`mb-6 p-4 rounded-md ${
                     submitStatus.success
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
                   }`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
                 >
                   {submitStatus.message}
-                </div>
+                </motion.div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Your Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  />
-                </div>
+              <motion.form 
+                onSubmit={handleSubmit} 
+                className="space-y-4"
+                initial="hidden"
+                animate="visible"
+                variants={staggerContainer}
+              >
+                {[
+                  { id: "name", label: "Your Name *", type: "text", required: true },
+                  { id: "email", label: "Email Address *", type: "email", required: true },
+                  { id: "phone", label: "Phone Number", type: "tel", required: false },
+                  { id: "subject", label: "Subject *", type: "select", required: true, options: [
+                      { value: "", label: "Select a subject" },
+                      { value: "Adoption", label: "Adoption Inquiry" },
+                      { value: "Volunteer", label: "Volunteer Opportunity" },
+                      { value: "Donation", label: "Donation Question" },
+                      { value: "Rescue", label: "Animal Rescue" },
+                      { value: "Other", label: "Other" }
+                    ]
+                  },
+                  { id: "message", label: "Your Message *", type: "textarea", required: true }
+                ].map((field, index) => (
+                  <motion.div key={field.id} variants={fadeIn}>
+                    <label
+                      htmlFor={field.id}
+                      className="block text-sm font-medium text-[#5E4FA2] mb-1"
+                    >
+                      {field.label}
+                    </label>
+                    {field.type === "textarea" ? (
+                      <motion.textarea
+                        id={field.id}
+                        name={field.id}
+                        value={formData[field.id]}
+                        onChange={handleChange}
+                        rows="5"
+                        required={field.required}
+                        className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+                        whileFocus={{ scale: 1.01 }}
+                      />
+                    ) : field.type === "select" ? (
+                      <motion.select
+                        id={field.id}
+                        name={field.id}
+                        value={formData[field.id]}
+                        onChange={handleChange}
+                        required={field.required}
+                        className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+                        whileFocus={{ scale: 1.01 }}
+                      >
+                        {field.options.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </motion.select>
+                    ) : (
+                      <motion.input
+                        type={field.type}
+                        id={field.id}
+                        name={field.id}
+                        value={formData[field.id]}
+                        onChange={handleChange}
+                        required={field.required}
+                        className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+                        whileFocus={{ scale: 1.01 }}
+                      />
+                    )}
+                  </motion.div>
+                ))}
 
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="subject"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Subject *
-                  </label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="Adoption">Adoption Inquiry</option>
-                    <option value="Volunteer">Volunteer Opportunity</option>
-                    <option value="Donation">Donation Question</option>
-                    <option value="Rescue">Animal Rescue</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Your Message *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows="5"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  ></textarea>
-                </div>
-
-                <button
+                <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-[#A294F9] text-white py-3 px-6 rounded-md hover:bg-[#8A7BD8] transition font-medium disabled:opacity-50"
+                  className="bg-[#A294F9] text-white py-3 px-6 rounded-md hover:bg-[#8A7BD8] transition font-medium disabled:opacity-50 w-full"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  variants={fadeIn}
                 >
-                  {isSubmitting ? "Sending..." : "Send Message"}
-                </button>
-              </form>
-            </div>
+                  {isSubmitting ? (
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                      Sending...
+                    </motion.span>
+                  ) : (
+                    "Send Message"
+                  )}
+                </motion.button>
+              </motion.form>
+            </motion.div>
           </div>
 
           {/* Map Section */}
-          <div className="mt-16 bg-white rounded-lg shadow-md overflow-hidden">
+          <motion.div 
+            className="mt-16 bg-white rounded-lg shadow-md overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3767.123456789012!2d72.98765432101234!3d19.123456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDA3JzI0LjQiTiA3MsKwNTknMTYuOCJF!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
               width="100%"
@@ -394,8 +448,8 @@ export default function ContactPage() {
               loading="lazy"
               title="Hope Animals Welfare Foundation Location"
             ></iframe>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
       <Footer />
     </>

@@ -4,9 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
+import { faHeart, faUsers, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../navbar/page";
 import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState([]);
@@ -24,7 +27,45 @@ export default function ReviewsPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const reviewsPerSlide = 3;
-  const autoSlideInterval = 3000; // 5 seconds
+  const autoSlideInterval = 5000; // 5 seconds
+
+  // Animation controls
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    triggerOnce: false
+  });
+
+  useEffect(() => {
+    if (inView) {
+      controls.start('visible');
+    }
+  }, [controls, inView]);
+
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" }
+    }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const pulseAnimation = {
+    scale: [1, 1.05, 1],
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+  };
 
   // Fetch reviews from Supabase
   useEffect(() => {
@@ -47,7 +88,6 @@ export default function ReviewsPage() {
 
         setReviews(formattedReviews);
       } catch (error) {
-        console.error("Error fetching reviews:", error);
         setSubmitStatus({
           success: false,
           message: "Failed to load reviews. Please try again later.",
@@ -188,9 +228,9 @@ export default function ReviewsPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-[#F5EFFF]">
+      <div className="min-h-screen bg-[#F5EFFF] overflow-hidden">
         {/* Hero Header */}
-        <div
+        <motion.div 
           className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
           style={{
             backgroundImage:
@@ -198,8 +238,16 @@ export default function ReviewsPage() {
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
         >
-          <div className="text-white px-4">
+          <motion.div 
+            className="text-white px-4"
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Share Your Experience
             </h1>
@@ -207,26 +255,35 @@ export default function ReviewsPage() {
               Your feedback helps us improve and continue our mission <br /> to
               help animals in need
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         <div className="max-w-2xl mx-auto px-4 py-12">
           {/* Review Form */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-12">
+          <motion.div 
+            className="bg-white rounded-lg shadow-md p-6 mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-2xl font-bold text-[#5E4FA2] mb-6">
               Leave a Review
             </h2>
 
             {submitStatus.message && (
-              <div
+              <motion.div
                 className={`mb-4 p-4 rounded-md ${
                   submitStatus.success
                     ? "bg-green-100 text-green-800"
                     : "bg-red-100 text-red-800"
                 }`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
               >
                 {submitStatus.message}
-              </div>
+              </motion.div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -237,7 +294,7 @@ export default function ReviewsPage() {
                 >
                   Your Name *
                 </label>
-                <input
+                <motion.input
                   type="text"
                   id="name"
                   name="name"
@@ -245,6 +302,7 @@ export default function ReviewsPage() {
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+                  whileFocus={{ scale: 1.01 }}
                 />
               </div>
 
@@ -254,13 +312,15 @@ export default function ReviewsPage() {
                 </label>
                 <div className="flex space-x-1">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <button
+                    <motion.button
                       type="button"
                       key={star}
                       onClick={() => handleRating(star)}
                       onMouseEnter={() => handleHoverRating(star)}
                       onMouseLeave={() => handleHoverRating(0)}
                       className="text-2xl focus:outline-none"
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
                     >
                       <FontAwesomeIcon
                         icon={
@@ -274,7 +334,7 @@ export default function ReviewsPage() {
                             : "text-gray-300"
                         }
                       />
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
@@ -286,7 +346,7 @@ export default function ReviewsPage() {
                 >
                   Your Review *
                 </label>
-                <textarea
+                <motion.textarea
                   id="comment"
                   name="comment"
                   value={newReview.comment}
@@ -295,185 +355,219 @@ export default function ReviewsPage() {
                   required
                   className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
                   placeholder="Share your experience with Hope Animals Welfare Foundation..."
-                ></textarea>
+                  whileFocus={{ scale: 1.01 }}
+                ></motion.textarea>
               </div>
 
-              <button
+              <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="bg-[#A294F9] text-white py-3 px-6 rounded-md hover:bg-[#8A7BD8] transition font-medium disabled:opacity-50"
+                className="bg-[#A294F9] text-white py-3 px-6 rounded-md hover:bg-[#8A7BD8] transition font-medium disabled:opacity-50 w-full"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 {isLoading ? "Submitting..." : "Submit Review"}
-              </button>
+              </motion.button>
             </form>
-          </div>
+          </motion.div>
         </div>
 
         {/* Reviews Slider */}
-      </div>
-      <div className="max-w-7xl mx-auto lg:p-7 md:p-6 p-1 bg-white ">
-      <div className="bg-white rounded-lg shadow-md p-6 mx-4 md:mx-10 ">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-[#5E4FA2]">
-            What People Say About Us
-          </h2>
-          {reviews.length > reviewsPerSlide && (
-            <button
-              onClick={toggleAutoPlay}
-              className="bg-[#E5D9F2] p-2 rounded-full hover:bg-[#CDC1FF] transition"
-              aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
-            >
-              {isAutoPlaying ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-[#5E4FA2]"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+        <div className="max-w-7xl mx-auto lg:p-7 md:p-6 p-1 bg-white">
+          <motion.div 
+            className="bg-white rounded-lg shadow-md p-6 mx-4 md:mx-10"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-[#5E4FA2]">
+                What People Say About Us
+              </h2>
+              {reviews.length > reviewsPerSlide && (
+                <motion.button
+                  onClick={toggleAutoPlay}
+                  className="bg-[#E5D9F2] p-2 rounded-full hover:bg-[#CDC1FF] transition"
+                  aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-[#5E4FA2]"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              )}
-            </button>
-          )}
-        </div>
-
-        {reviews.length > 0 ? (
-          <div className="relative">
-            <div className="overflow-hidden">
-              <div
-                className="transition-transform duration-300 ease-in-out"
-                onMouseEnter={() => setIsAutoPlaying(false)}
-                onMouseLeave={() => setIsAutoPlaying(true)}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {getVisibleReviews().map((review) => (
-                    <div
-                      key={review.id}
-                      className="bg-[#F5EFFF] p-4 rounded-lg h-full"
+                  {isAutoPlaying ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#5E4FA2]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      <div className="flex justify-center mb-2">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <FontAwesomeIcon
-                            key={star}
-                            icon={
-                              review.rating >= star ? solidStar : regularStar
-                            }
-                            className={`text-xl ${
-                              review.rating >= star
-                                ? "text-yellow-400"
-                                : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-lg text-[#5E4FA2] mb-3 italic">
-                        "{review.comment}"
-                      </p>
-                      <p className="font-bold text-[#A294F9]">{review.name}</p>
-                      <p className="text-sm text-gray-500">{review.date}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-[#5E4FA2]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  )}
+                </motion.button>
+              )}
             </div>
 
-            {reviews.length > reviewsPerSlide && (
-              <>
-                <button
-                  onClick={prevSlide}
-                  className="absolute -left-8 top-1/2 transform -translate-y-1/2 bg-[#E5D9F2] p-2 rounded-full hover:bg-[#CDC1FF] transition"
-                  aria-label="Previous reviews"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-[#5E4FA2]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+            {reviews.length > 0 ? (
+              <div className="relative">
+                <div className="overflow-hidden">
+                  <div
+                    className="transition-transform duration-300 ease-in-out"
+                    onMouseEnter={() => setIsAutoPlaying(false)}
+                    onMouseLeave={() => setIsAutoPlaying(true)}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="absolute -right-8 top-1/2 transform -translate-y-1/2 bg-[#E5D9F2] p-2 rounded-full hover:bg-[#CDC1FF] transition"
-                  aria-label="Next reviews"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-[#5E4FA2]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              </>
-            )}
+                    <motion.div 
+                      className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                      variants={staggerContainer}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                    >
+                      {getVisibleReviews().map((review) => (
+                        <motion.div
+                          key={review.id}
+                          className="bg-[#F5EFFF] p-4 rounded-lg h-full"
+                          variants={fadeIn}
+                          whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+                        >
+                          <div className="flex justify-center mb-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <motion.div
+                                key={star}
+                                whileHover={{ scale: 1.2 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <FontAwesomeIcon
+                                  icon={review.rating >= star ? solidStar : regularStar}
+                                  className={`text-xl ${
+                                    review.rating >= star
+                                      ? "text-yellow-400"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              </motion.div>
+                            ))}
+                          </div>
+                          <p className="text-lg text-[#5E4FA2] mb-3 italic">
+                            "{review.comment}"
+                          </p>
+                          <p className="font-bold text-[#A294F9]">{review.name}</p>
+                          <p className="text-sm text-gray-500">{review.date}</p>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  </div>
+                </div>
 
-            {reviews.length > reviewsPerSlide && (
-              <div className="flex justify-center mt-6 space-x-2">
-                {Array.from({
-                  length: Math.ceil(reviews.length / reviewsPerSlide),
-                }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToSlide(index)}
-                    className={`h-2 w-2 rounded-full transition-all ${
-                      index === currentSlide
-                        ? "bg-[#A294F9] w-4"
-                        : "bg-[#E5D9F2]"
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
+                {reviews.length > reviewsPerSlide && (
+                  <>
+                    <motion.button
+                      onClick={prevSlide}
+                      className="absolute -left-8 top-1/2 transform -translate-y-1/2 bg-[#E5D9F2] p-2 rounded-full hover:bg-[#CDC1FF] transition"
+                      aria-label="Previous reviews"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-[#5E4FA2]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                    </motion.button>
+                    <motion.button
+                      onClick={nextSlide}
+                      className="absolute -right-8 top-1/2 transform -translate-y-1/2 bg-[#E5D9F2] p-2 rounded-full hover:bg-[#CDC1FF] transition"
+                      aria-label="Next reviews"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-[#5E4FA2]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </motion.button>
+                  </>
+                )}
+
+                {reviews.length > reviewsPerSlide && (
+                  <div className="flex justify-center mt-6 space-x-2">
+                    {Array.from({
+                      length: Math.ceil(reviews.length / reviewsPerSlide),
+                    }).map((_, index) => (
+                      <motion.button
+                        key={index}
+                        onClick={() => goToSlide(index)}
+                        className={`h-2 w-2 rounded-full transition-all ${
+                          index === currentSlide
+                            ? "bg-[#A294F9] w-4"
+                            : "bg-[#E5D9F2]"
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                        whileHover={{ scale: 1.5 }}
+                        whileTap={{ scale: 0.8 }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
+            ) : (
+              <motion.p 
+                className="text-center text-[#5E4FA2]"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                No reviews yet. Be the first to review!
+              </motion.p>
             )}
-          </div>
-        ) : (
-          <p className="text-center text-[#5E4FA2]">
-            No reviews yet. Be the first to review!
-          </p>
-        )}
-      </div>
+          </motion.div>
+        </div>
       </div>
 
       <Footer />

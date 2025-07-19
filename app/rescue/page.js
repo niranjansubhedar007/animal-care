@@ -9,6 +9,9 @@ import {
 import Navbar from '../navbar/page';
 import Link from 'next/link';
 import Footer from '../footer/page';
+import { motion, useAnimation } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+
 // Locations in Mumbai/Thane for random selection
 const locations = [
   "Thane Station", "Ghodbunder Road", "Hiranandani Estate", "Kolshet Road", 
@@ -20,6 +23,44 @@ const Rescue = () => {
   const [selectedStory, setSelectedStory] = useState(null);
   const [view, setView] = useState('grid'); // 'grid' or 'single'
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Animation controls
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    triggerOnce: false
+  });
+
+  useEffect(() => {
+    if (inView) {
+      controls.start('visible');
+    }
+  }, [controls, inView]);
+
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" }
+    }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const pulseAnimation = {
+    scale: [1, 1.05, 1],
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+  };
 
   // Sample rescue stories data with location
   const stories = [
@@ -122,18 +163,16 @@ const Rescue = () => {
       fullStory: "Working with local authorities, we confiscated four donkeys from an illegal brick kiln operation. One was in particularly bad shape, with open sores from ill-fitting harnesses and extreme malnutrition. After six months of specialized care, he's regained a healthy weight and enjoys daily walks with his new donkey friends at our sanctuary.",
       location: "Rabale"
     },
-     {
-    id: 10,
-    title: "Injured Sparrow Returns to the Sky",
-    animal: "Bird",
-    date: "July 29, 2023",
-    image: "/images/sparrow-1.webp",
-    excerpt: "A black Sparrow with a fractured wing was treated and successfully released.",
-    fullStory: "Locals found the bird grounded near a landfill in Kalyan. X-rays confirmed a wing fracture. With surgical care and weeks of flight therapy, the sparrow eventually regained strength and was released at dawn near a forest edge. Watching it soar again was unforgettable.",
-    location: "Kalyan"
-  }
-    
-
+    {
+      id: 10,
+      title: "Injured Sparrow Returns to the Sky",
+      animal: "Bird",
+      date: "July 29, 2023",
+      image: "/images/sparrow-1.webp",
+      excerpt: "A black Sparrow with a fractured wing was treated and successfully released.",
+      fullStory: "Locals found the bird grounded near a landfill in Kalyan. X-rays confirmed a wing fracture. With surgical care and weeks of flight therapy, the sparrow eventually regained strength and was released at dawn near a forest edge. Watching it soar again was unforgettable.",
+      location: "Kalyan"
+    }
   ];
 
   // Slider functionality
@@ -152,8 +191,6 @@ const Rescue = () => {
     return () => clearInterval(interval);
   }, []);
 
-
-
   // Generate a random rescue story based on animal type
   const generateRandomRescue = (animalType) => {
     const randomLocation = locations[Math.floor(Math.random() * locations.length)];
@@ -169,8 +206,7 @@ const Rescue = () => {
       Monkey: ["Manoj", "Bandar", "Gippy", "Cheeku", "Babloo"],
       Cow: ["Gauri", "Lakshmi", "Kamadhenu", "Nandini", "Radha", "Ganga"],
       Donkey: ["Gadha", "Lalu", "Chotu", "Bholu", "Ramu"],
-          Bird: ["Mitthu", "Chirpy", "Tweety", "Sky", "Feather", "Coco", "Kiwi"]
-
+      Bird: ["Mitthu", "Chirpy", "Tweety", "Sky", "Feather", "Coco", "Kiwi"]
     };
 
     const name = animalNames[animalType][Math.floor(Math.random() * animalNames[animalType].length)];
@@ -180,8 +216,7 @@ const Rescue = () => {
       Monkey: ["electrocution burns", "hit by vehicle", "trapped in wire", "dehydration"],
       Cow: ["dehydrated", "injured leg", "separated from mother", "illegal transport", "yoke injuries"],
       Donkey: ["overwork injuries", "hoof problems", "malnutrition", "harness wounds"],
-          Bird: ["fractured wing", "caught in net", "illegal cage trade", "heatstroke", "dehydration"]
-
+      Bird: ["fractured wing", "caught in net", "illegal cage trade", "heatstroke", "dehydration"]
     };
 
     const condition = conditions[animalType][Math.floor(Math.random() * conditions[animalType].length)];
@@ -194,12 +229,13 @@ const Rescue = () => {
       story: `Our team was alerted about a ${animalType.toLowerCase()} in distress near ${randomLocation}. When we arrived, we found ${name} suffering from ${condition}. After ${Math.floor(Math.random() * 5) + 1} days of treatment and care, ${name} made a full recovery and was ${Math.random() > 0.3 ? 'adopted by a loving family' : 'released back to a safe location'}.`
     };
   };
-const featuredStories = stories
-  .filter(story => [1, 3, 5, 7, 9].includes(story.id))
-  .map(story => ({
-    ...story,
-    randomRescue: generateRandomRescue(story.animal)
-  }));
+
+  const featuredStories = stories
+    .filter(story => [1, 3, 5, 7, 9].includes(story.id))
+    .map(story => ({
+      ...story,
+      randomRescue: generateRandomRescue(story.animal)
+    }));
 
   const handleStoryClick = (story) => {
     setSelectedStory({
@@ -214,70 +250,132 @@ const featuredStories = stories
     setSelectedStory(null);
   };
 
-
-
-
-  
   if (view === 'single' && selectedStory) {
     return (
-      <div className="font-sans bg-[#F5EFFF] min-h-screen">
+      <div className="font-sans bg-gradient-to-b from-[#F5F0FF] to-[#F0F5FF] min-h-screen">
         <div className="max-w-4xl mx-auto px-6 py-16">
-          <button 
+          <motion.button 
             onClick={closeStory}
-            className="flex items-center text-[#A294F9] hover:text-[#8A7BD8] mb-8 transition"
+            className="flex items-center text-[#A294F9] hover:text-[#8A7BD8] mb-8 transition group"
+            whileHover={{ x: -5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
           >
-            <FontAwesomeIcon icon={faArrowRight} className="rotate-180 mr-2" />
+            <FontAwesomeIcon 
+              icon={faArrowRight} 
+              className="rotate-180 mr-2 transition-transform duration-300 group-hover:-translate-x-1" 
+            />
             Back to all stories
-          </button>
+          </motion.button>
 
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg overflow-hidden border border-[#F0F0F0]"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <div className="h-96 overflow-hidden">
-              <img 
+              <motion.img 
                 src={selectedStory.image} 
                 alt={selectedStory.title}
                 className="w-full h-full object-cover"
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.8 }}
               />
             </div>
             
             <div className="p-8">
-              <div className="flex flex-wrap items-center text-[#A294F9] mb-4 gap-4">
-                <span className="flex items-center">
+              <div className="flex flex-wrap items-center gap-4 mb-4">
+                <motion.span 
+                  className={`flex items-center px-3 py-1 rounded-full ${
+                    selectedStory.animal === 'Dog' ? 'bg-[#FFEEF2] text-[#FF7E5F]' :
+                    selectedStory.animal === 'Cat' ? 'bg-[#E5F9FF] text-[#4ECDC4]' :
+                    selectedStory.animal === 'Monkey' ? 'bg-[#FFF5E5] text-[#FFB347]' :
+                    'bg-[#F5EFFF] text-[#A294F9]'
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                >
                   <FontAwesomeIcon icon={faPaw} className="mr-2" />
                   {selectedStory.animal}
-                </span>
-                <span className="flex items-center">
+                </motion.span>
+                
+                <motion.span 
+                  className="flex items-center px-3 py-1 rounded-full bg-[#F5F5F5] text-gray-600"
+                  whileHover={{ scale: 1.05 }}
+                >
                   <FontAwesomeIcon icon={faCalendarAlt} className="mr-2" />
                   {selectedStory.date}
-                </span>
-                <span className="flex items-center">
+                </motion.span>
+                
+                <motion.span 
+                  className="flex items-center px-3 py-1 rounded-full bg-[#F5F5F5] text-gray-600"
+                  whileHover={{ scale: 1.05 }}
+                >
                   <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
                   {selectedStory.location}
-                </span>
+                </motion.span>
               </div>
               
-              <h1 className="text-3xl font-bold text-[#5E4FA2] mb-6">{selectedStory.title}</h1>
+              <motion.h1 
+                className="text-3xl font-bold text-[#5E4FA2] mb-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                {selectedStory.title}
+              </motion.h1>
               
               <div className="prose max-w-none text-gray-700 mb-8">
-                <p className="text-lg mb-6">{selectedStory.fullStory}</p>
+                <motion.p 
+                  className="text-lg mb-6"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {selectedStory.fullStory}
+                </motion.p>
                 
-                <div className="bg-[#F5EFFF] p-6 rounded-lg mb-8">
+                <motion.div 
+                  className={`p-6 rounded-lg mb-8 ${
+                    selectedStory.animal === 'Dog' ? 'bg-[#FFEEF2] border border-[#FFE5E5]' :
+                    selectedStory.animal === 'Cat' ? 'bg-[#E5F9FF] border border-[#E0F7FF]' :
+                    selectedStory.animal === 'Monkey' ? 'bg-[#FFF5E5] border border-[#FFEEDD]' :
+                    'bg-[#F5EFFF] border border-[#E5D9F2]'
+                  }`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
                   <h3 className="text-xl font-semibold text-[#5E4FA2] mb-4">Rescue Details</h3>
                   <p>
                     <strong>Location:</strong> {selectedStory.randomRescue.location}<br />
                     <strong>Date Found:</strong> {selectedStory.randomRescue.date}<br />
                     <strong>Condition:</strong> {selectedStory.randomRescue.condition}
                   </p>
-                </div>
+                </motion.div>
                 
-                <p className="text-lg">{selectedStory.randomRescue.story}</p>
+                <motion.p 
+                  className="text-lg"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  {selectedStory.randomRescue.story}
+                </motion.p>
               </div>
               
-              <div className="border-t border-[#E5D9F2] pt-6">
+              <motion.div 
+                className="border-t border-[#E5D9F2] pt-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+              >
                 <p className="text-[#A294F9] font-medium">This rescue was made possible by donors like you</p>
-           
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     );
@@ -285,224 +383,409 @@ const featuredStories = stories
 
   return (
     <>
-    <Navbar/>
-    <div className="font-sans bg-[#F5EFFF]">
-      {/* Hero Section */}
-      <div 
-        className="relative h-96 flex items-center justify-center text-center bg-[#A294F9]"
-        style={{
-          backgroundImage: "linear-gradient(rgba(165, 148, 249, 0.85), rgba(165, 148, 249, 0.85)), url('/images/rescue-hero.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      >
-        <div className="text-white px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Rescue Stories</h1>
-          <p className="text-xl md:text-2xl">Every life saved has a story worth telling</p>
-        </div>
-      </div>
-<div className="bg-white py-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-[#5E4FA2] mb-12">Meet Our Rescue Heroes</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-[#F5EFFF] p-8 rounded-xl text-center">
-              <div className="bg-[#A294F9] text-white w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4">
-                <FontAwesomeIcon icon={faUser} className="text-3xl" />
-              </div>
-              <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">Nisha Pawar</h3>
-              <p className="text-gray-600 mb-2">Lead Veterinarian</p>
-              <p className="text-gray-700">
-                "Every animal deserves compassionate care. I've treated over 1,200 rescues and each recovery story fuels my passion."
-              </p>
-            </div>
+      <Navbar/>
+      <div className="font-sans bg-gradient-to-b from-[#F5F0FF] to-[#F0F5FF] overflow-hidden">
+        {/* Hero Section */}
+        <motion.div 
+          className="relative h-96 flex items-center justify-center text-center"
+          style={{
+            backgroundImage: `linear-gradient(rgba(94, 79, 162, 0.85), rgba(94, 79, 162, 0.85)), url('/images/rescue-hero.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <motion.div 
+            className="text-white px-4"
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Rescue Stories</h1>
+            <p className="text-xl md:text-2xl">Every life saved has a story worth telling</p>
+          </motion.div>
+        </motion.div>
 
-            <div className="bg-[#F5EFFF] p-8 rounded-xl text-center">
-              <div className="bg-[#A294F9] text-white w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4">
-                <FontAwesomeIcon icon={faUsers} className="text-3xl" />
-              </div>
-              <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">The Night Rescue Team</h3>
-              <p className="text-gray-600 mb-2">Emergency Response Unit</p>
-              <p className="text-gray-700">
-                "We patrol Thane's streets nightly, responding to distress calls and saving animals in critical condition."
-              </p>
-            </div>
-
-            <div className="bg-[#F5EFFF] p-8 rounded-xl text-center">
-              <div className="bg-[#A294F9] text-white w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4">
-                <FontAwesomeIcon icon={faHandsHelping} className="text-3xl" />
-              </div>
-              <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">Foster Care Network</h3>
-              <p className="text-gray-600 mb-2">150+ Volunteer Families</p>
-              <p className="text-gray-700">
-                "Our foster families provide temporary homes where animals heal physically and emotionally before adoption."
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Rescue Process Infographic */}
-      <div className="bg-[#E5D9F2] py-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-[#5E4FA2] mb-12">Our Rescue Process</h2>
-          
-          <div className="relative">
-            <div className="hidden md:block absolute left-0 right-0 top-1/2 h-1 bg-[#A294F9]"></div>
+        {/* Featured Stories Carousel */}
+        <div className="bg-white py-16">
+          <div className="max-w-6xl mx-auto px-6">
+            <motion.h2 
+              className="text-3xl font-bold text-center text-[#5E4FA2] mb-12"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              Featured Rescues
+            </motion.h2>
             
-            <div className="grid md:grid-cols-5 gap-8 relative z-10">
-              {[
-                { icon: faClipboardList, title: "1. Emergency Call", text: "24/7 hotline receives distress calls" },
-                { icon: faUser, title: "2. Rapid Response", text: "Nearest team dispatched within 30 mins" },
-                { icon: faMedal, title: "3. Medical Triage", text: "Immediate assessment by our vets" },
-                { icon: faHeart, title: "4. Treatment Plan", text: "Customized care for each case" },
-                { icon: faPaw, title: "5. Recovery & Rehome", text: "Rehabilitation leading to adoption" }
-              ].map((step, index) => (
-                <div key={index} className="bg-white p-6 rounded-xl shadow-md text-center">
-                  <div className="bg-[#A294F9] text-white w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                    <FontAwesomeIcon icon={step.icon} className="text-2xl" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-[#5E4FA2] mb-2">{step.title}</h3>
-                  <p className="text-gray-700">{step.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Community Impact */}
-      <div className="bg-white py-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-[#5E4FA2] mb-12">Community Impact</h2>
-          
-          <div className="grid md:grid-cols-2 gap-10 items-center">
-            <div>
-              <h3 className="text-2xl font-semibold text-[#5E4FA2] mb-4">Educating Future Generations</h3>
-              <p className="text-gray-700 mb-6">
-                We've conducted 85+ workshops in Thane schools, teaching 3,200+ children about animal welfare, responsible pet ownership, and compassion toward all living beings.
-              </p>
-              <div className="bg-[#F5EFFF] p-6 rounded-lg">
-                <p className="font-semibold text-[#5E4FA2]">"My students now organize donation drives and want to become veterinarians!"</p>
-                <p className="text-gray-600">- Mrs. Desai, School Principal</p>
-              </div>
-            </div>
-            
-            <div className="bg-[#F5EFFF] p-8 rounded-xl">
-              <h3 className="text-xl font-semibold text-[#5E4FA2] mb-4">By The Numbers</h3>
-              <ul className="space-y-4">
-                {[
-                  { stat: "2,500+", label: "Animals rescued since 2021" },
-                  { stat: "1,800+", label: "Successful sterilizations" },
-                  { stat: "92%", label: "Rescue success rate" },
-                  { stat: "150+", label: "Active volunteers" },
-                  { stat: "50+", label: "Community partnerships" }
-                ].map((item, index) => (
-                  <li key={index} className="flex items-center">
-                    <div className="bg-[#A294F9] w-3 h-3 rounded-full mr-3"></div>
-                    <span className="font-bold text-[#5E4FA2] mr-2">{item.stat}</span>
-                    <span className="text-gray-700">{item.label}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      {/* Stories Grid */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-bold text-center text-[#5E4FA2] mb-12">Recent Rescues</h2>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {stories.map((story) => (
-            <div key={story.id} className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
-              <div className="h-48 overflow-hidden">
-                <img 
-                  src={story.image} 
-                  alt={story.title}
-                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center text-[#A294F9] mb-3">
-                  <FontAwesomeIcon icon={faPaw} className="mr-2" />
-                  <span className="font-medium">{story.animal}</span>
-                  <span className="mx-2">•</span>
-                  <FontAwesomeIcon icon={faCalendarAlt} className="mr-2" />
-                  <span>{story.date}</span>
-                </div>
-                <h3 className="text-2xl font-bold text-[#5E4FA2] mb-3">{story.title}</h3>
-                <p className="text-gray-700 mb-5">{story.excerpt}</p>
-                <button 
-                  onClick={() => handleStoryClick(story)}
-                  className="flex items-center text-[#A294F9] font-semibold hover:text-[#8A7BD8] transition"
+            <div className="relative h-96">
+              {featuredStories.map((story, index) => (
+                <motion.div
+                  key={story.id}
+                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${index === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: index === currentSlide ? 1 : 0 }}
                 >
-                  Read full story <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-                </button>
-              </div>
+                  <div className="bg-white rounded-xl shadow-xl overflow-hidden flex flex-col md:flex-row h-full w-full max-w-4xl border border-[#F0F0F0]">
+                    <div className="md:w-1/2 h-64 md:h-full">
+                      <motion.img 
+                        src={story.image} 
+                        alt={story.title}
+                        className="w-full h-full object-cover"
+                        initial={{ scale: 1.1 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.8 }}
+                      />
+                    </div>
+                    <div className="md:w-1/2 p-6 flex flex-col justify-center">
+                      <div className="flex items-center mb-3">
+                        <div className={`p-2 rounded-full mr-3 ${
+                          story.animal === 'Dog' ? 'bg-[#FFEEF2] text-[#FF7E5F]' :
+                          story.animal === 'Cat' ? 'bg-[#E5F9FF] text-[#4ECDC4]' :
+                          story.animal === 'Monkey' ? 'bg-[#FFF5E5] text-[#FFB347]' :
+                          'bg-[#F5EFFF] text-[#A294F9]'
+                        }`}>
+                          <FontAwesomeIcon icon={faPaw} />
+                        </div>
+                        <span className="text-[#5E4FA2]">{story.animal}</span>
+                      </div>
+                      <h3 className="text-2xl font-bold text-[#5E4FA2] mb-3">{story.title}</h3>
+                      <p className="text-gray-700 mb-5">{story.excerpt}</p>
+                      <motion.button
+                        onClick={() => handleStoryClick(story)}
+                        className="flex items-center text-[#A294F9] font-semibold hover:text-[#8A7BD8] transition self-start group"
+                        whileHover={{ x: 5 }}
+                      >
+                        Read full story 
+                        <motion.span 
+                          className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1"
+                        >
+                          <FontAwesomeIcon icon={faArrowRight} />
+                        </motion.span>
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+              
+              <motion.button 
+                onClick={prevSlide}
+                className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-3 rounded-full hover:bg-[#F5EFFF] transition ml-4 shadow-md border border-[#E5D9F2]"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FontAwesomeIcon icon={faArrowLeft} className="text-[#5E4FA2]" />
+              </motion.button>
+              <motion.button 
+                onClick={nextSlide}
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-3 rounded-full hover:bg-[#F5EFFF] transition mr-4 shadow-md border border-[#E5D9F2]"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FontAwesomeIcon icon={faArrowRight} className="text-[#5E4FA2]" />
+              </motion.button>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
 
-      {/* How You Helped Section */}
-      <div className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-[#5E4FA2] mb-4">How Your Support Makes a Difference</h2>
-          <p className="text-xl text-gray-700 mb-10 max-w-3xl mx-auto">
-            Every donation and volunteer hour directly contributes to stories like these
-          </p>
+        {/* Rescue Heroes Section */}
+        <div className="bg-white py-16">
+          <div className="max-w-6xl mx-auto px-6">
+            <motion.h2 
+              className="text-3xl font-bold text-center text-[#5E4FA2] mb-12"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              Meet Our Rescue Heroes
+            </motion.h2>
+            
+            <motion.div 
+              className="grid md:grid-cols-3 gap-8"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {/* Veterinarian Card */}
+              <motion.div 
+                className="bg-gradient-to-br from-[#FFEEF2] to-[#FFF5EE] p-8 rounded-xl text-center border border-[#FFE5E5]"
+                variants={fadeIn}
+                whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(255, 126, 95, 0.1)" }}
+              >
+                <motion.div 
+                  className="bg-gradient-to-br from-[#FF7E5F] to-[#FFB347] w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 shadow-md"
+                  animate={pulseAnimation}
+                >
+                  <FontAwesomeIcon icon={faUser} className="text-3xl text-white" />
+                </motion.div>
+                <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">Nisha Pawar</h3>
+                <p className="text-[#FF7E5F] mb-2">Lead Veterinarian</p>
+                <p className="text-gray-700">
+                  "Every animal deserves compassionate care. I've treated over 1,200 rescues and each recovery story fuels my passion."
+                </p>
+              </motion.div>
+
+              {/* Night Team Card */}
+              <motion.div 
+                className="bg-gradient-to-br from-[#E5F9FF] to-[#F0F9FF] p-8 rounded-xl text-center border border-[#E0F7FF]"
+                variants={fadeIn}
+                whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(78, 205, 196, 0.1)" }}
+              >
+                <motion.div 
+                  className="bg-gradient-to-br from-[#4ECDC4] to-[#7FD1D1] w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 shadow-md"
+                  animate={pulseAnimation}
+                >
+                  <FontAwesomeIcon icon={faUsers} className="text-3xl text-white" />
+                </motion.div>
+                <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">The Night Rescue Team</h3>
+                <p className="text-[#4ECDC4] mb-2">Emergency Response Unit</p>
+                <p className="text-gray-700">
+                  "We patrol Thane's streets nightly, responding to distress calls and saving animals in critical condition."
+                </p>
+              </motion.div>
+
+              {/* Foster Network Card */}
+              <motion.div 
+                className="bg-gradient-to-br from-[#F5EFFF] to-[#F0E5FF] p-8 rounded-xl text-center border border-[#E5D9F2]"
+                variants={fadeIn}
+                whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(162, 148, 249, 0.1)" }}
+              >
+                <motion.div 
+                  className="bg-gradient-to-br from-[#A294F9] to-[#C1B6FF] w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 shadow-md"
+                  animate={pulseAnimation}
+                >
+                  <FontAwesomeIcon icon={faHandsHelping} className="text-3xl text-white" />
+                </motion.div>
+                <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">Foster Care Network</h3>
+                <p className="text-[#A294F9] mb-2">150+ Volunteer Families</p>
+                <p className="text-gray-700">
+                  "Our foster families provide temporary homes where animals heal physically and emotionally before adoption."
+                </p>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Rescue Process Section */}
+        <div className="bg-gradient-to-br from-[#F5F0FF] to-[#F0F5FF] py-16">
+          <div className="max-w-6xl mx-auto px-6">
+            <motion.h2 
+              className="text-3xl font-bold text-center text-[#5E4FA2] mb-12"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              Our Rescue Process
+            </motion.h2>
+            
+            <div className="relative">
+              <div className="hidden md:block absolute left-0 right-0 top-1/2 h-1 bg-gradient-to-r from-[#FF7E5F] via-[#A294F9] to-[#4ECDC4]"></div>
+              
+              <motion.div 
+                className="grid md:grid-cols-5 gap-8 relative z-10"
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {/* Emergency Call */}
+                <motion.div 
+                  className="bg-white p-6 rounded-xl shadow-md text-center border border-[#FFEEEE]"
+                  variants={fadeIn}
+                  whileHover={{ y: -10, rotate: 1 }}
+                >
+                  <div className="bg-[#FFEEEE] text-[#FF7E5F] w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <FontAwesomeIcon icon={faClipboardList} className="text-2xl" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#5E4FA2] mb-2">1. Emergency Call</h3>
+                  <p className="text-gray-700">24/7 hotline receives distress calls</p>
+                </motion.div>
+
+                {/* Rapid Response */}
+                <motion.div 
+                  className="bg-white p-6 rounded-xl shadow-md text-center border border-[#E5F9FF]"
+                  variants={fadeIn}
+                  whileHover={{ y: -10, rotate: -1 }}
+                >
+                  <div className="bg-[#E5F9FF] text-[#4ECDC4] w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <FontAwesomeIcon icon={faUser} className="text-2xl" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#5E4FA2] mb-2">2. Rapid Response</h3>
+                  <p className="text-gray-700">Nearest team dispatched within 30 mins</p>
+                </motion.div>
+
+                {/* Medical Triage */}
+                <motion.div 
+                  className="bg-white p-6 rounded-xl shadow-md text-center border border-[#FFF5E5]"
+                  variants={fadeIn}
+                  whileHover={{ y: -10, rotate: 1 }}
+                >
+                  <div className="bg-[#FFF5E5] text-[#FFB347] w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <FontAwesomeIcon icon={faMedal} className="text-2xl" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#5E4FA2] mb-2">3. Medical Triage</h3>
+                  <p className="text-gray-700">Immediate assessment by our vets</p>
+                </motion.div>
+
+                {/* Treatment Plan */}
+                <motion.div 
+                  className="bg-white p-6 rounded-xl shadow-md text-center border border-[#FFEEF2]"
+                  variants={fadeIn}
+                  whileHover={{ y: -10, rotate: -1 }}
+                >
+                  <div className="bg-[#FFEEF2] text-[#FF7E5F] w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <FontAwesomeIcon icon={faHeart} className="text-2xl" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#5E4FA2] mb-2">4. Treatment Plan</h3>
+                  <p className="text-gray-700">Customized care for each case</p>
+                </motion.div>
+
+                {/* Recovery & Rehome */}
+                <motion.div 
+                  className="bg-white p-6 rounded-xl shadow-md text-center border border-[#F5EFFF]"
+                  variants={fadeIn}
+                  whileHover={{ y: -10, rotate: 1 }}
+                >
+                  <div className="bg-[#F5EFFF] text-[#A294F9] w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <FontAwesomeIcon icon={faPaw} className="text-2xl" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#5E4FA2] mb-2">5. Recovery & Rehome</h3>
+                  <p className="text-gray-700">Rehabilitation leading to adoption</p>
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stories Grid Section */}
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <motion.h2 
+            className="text-3xl font-bold text-center text-[#5E4FA2] mb-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            Recent Rescues
+          </motion.h2>
           
-          <div className="grid md:grid-cols-3 gap-8 text-left">
-            <div className="bg-[#F5EFFF] p-8 rounded-xl">
-              <div className="text-5xl font-bold text-[#A294F9] mb-4">1</div>
-              <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">Rescue</h3>
-              <p className="text-gray-700">
-                Your support funds emergency rescues, medical kits, and our 24/7 rescue hotline.
-              </p>
-            </div>
-            <div className="bg-[#F5EFFF] p-8 rounded-xl">
-              <div className="text-5xl font-bold text-[#A294F9] mb-4">2</div>
-              <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">Recover</h3>
-              <p className="text-gray-700">
-                Donations provide medical care, surgeries, and rehabilitation facilities.
-              </p>
-            </div>
-            <div className="bg-[#F5EFFF] p-8 rounded-xl">
-              <div className="text-5xl font-bold text-[#A294F9] mb-4">3</div>
-              <h3 className="text-xl font-semibold text-[#5E4FA2] mb-3">Rehome</h3>
-              <p className="text-gray-700">
-                Your contributions support adoption events, foster networks, and home checks.
-              </p>
-            </div>
-          </div>
+          <motion.div 
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-10"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {stories.map((story) => (
+              <motion.div 
+                key={story.id}
+                className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 border border-[#F0F0F0]"
+                variants={fadeIn}
+                whileHover={{ y: -5 }}
+              >
+                <div className="h-48 overflow-hidden">
+                  <motion.img 
+                    src={story.image} 
+                    alt={story.title}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center mb-3">
+                    <div className={`p-2 rounded-full mr-3 ${
+                      story.animal === 'Dog' ? 'bg-[#FFEEF2] text-[#FF7E5F]' :
+                      story.animal === 'Cat' ? 'bg-[#E5F9FF] text-[#4ECDC4]' :
+                      story.animal === 'Monkey' ? 'bg-[#FFF5E5] text-[#FFB347]' :
+                      'bg-[#F5EFFF] text-[#A294F9]'
+                    }`}>
+                      <FontAwesomeIcon icon={faPaw} />
+                    </div>
+                    <span className="font-medium text-[#5E4FA2]">{story.animal}</span>
+                    <span className="mx-2 text-gray-300">•</span>
+                    <div className="text-gray-500">
+                      <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+                      <span>{story.date}</span>
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#5E4FA2] mb-3">{story.title}</h3>
+                  <p className="text-gray-700 mb-5">{story.excerpt}</p>
+                  <motion.button 
+                    onClick={() => handleStoryClick(story)}
+                    className="flex items-center text-[#A294F9] font-semibold hover:text-[#8A7BD8] transition group"
+                    whileHover={{ x: 5 }}
+                  >
+                    Read full story 
+                    <motion.span 
+                      className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1"
+                    >
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </motion.span>
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
-      </div>
 
-      {/* CTA Section */}
-      <div className="bg-[#CDC1FF] py-16">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-[#5E4FA2] mb-6">Be Part of the Next Rescue Story</h2>
-          <p className="text-xl text-gray-700 mb-8">
-            Whether through donations, volunteering, or adoption - you can help write happy endings.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Link href="donate">
-            <button className="bg-[#5E4FA2] hover:bg-[#4D3D8F] text-white font-bold py-3 px-8 rounded-full transition duration-300">
-              Donate to Support Rescues
-            </button>
-            </Link>
-            <Link href="/contact">
-            <button className="bg-white text-[#5E4FA2] border-2 border-[#5E4FA2] hover:bg-[#F5EFFF] font-bold py-3 px-8 rounded-full transition duration-300">
-              Share Your Story
-            </button>
-            </Link>
+        {/* CTA Section */}
+        <motion.div 
+          className="bg-gradient-to-r from-[#A294F9] to-[#7FD1D1] py-16"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold text-white mb-6">Be Part of the Next Rescue Story</h2>
+            <p className="text-xl text-white/90 mb-8">
+              Whether through donations, volunteering, or adoption - you can help write happy endings.
+            </p>
+            <motion.div 
+              className="flex flex-col sm:flex-row justify-center gap-4"
+              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ staggerChildren: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Link href="/donate">
+                <motion.button 
+                  className="bg-white text-[#5E4FA2] font-bold py-3 px-8 rounded-full transition duration-300 hover:bg-opacity-90"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4 }}
+                  viewport={{ once: true }}
+                >
+                  Donate to Support Rescues
+                </motion.button>
+              </Link>
+              <Link href="/contact">
+                <motion.button 
+                  className="bg-transparent border-2 border-white text-blue-800 font-bold py-3 px-8 rounded-full transition duration-300 hover:bg-white hover:bg-opacity-10"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  Share Your Story
+                </motion.button>
+              </Link>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
-    <Footer/>
+      <Footer/>
     </>
   );
 };

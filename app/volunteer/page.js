@@ -2,10 +2,22 @@
 
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHandsHelping, faHeart } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faHandsHelping, 
+  faHeart,
+  faBullhorn,
+  faMemory,
+  faHandHoldingHeart,
+  faUsers,
+  faCalendarAlt,
+  faUserGrow,
+  faUsersRays
+} from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../navbar/page";
 import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 export default function Volunteer() {
   const [formData, setFormData] = useState({
@@ -21,6 +33,38 @@ export default function Volunteer() {
     success: false,
     message: "",
   });
+
+  // Animation controls
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true
+  });
+
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15
+      }
+    }
+  };
+
+  const pulseAnimation = {
+    scale: [1, 1.05, 1],
+    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,285 +122,240 @@ export default function Volunteer() {
     <>
       <Navbar />
       <div className="font-sans bg-white">
-        <div className=" mx-auto bg-white">
-          <div
-            className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(165, 148, 249, 0.8), rgba(165, 148, 249, 0.8)), url('/images/about-hero.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+        {/* Hero Section with Animation */}
+        <motion.div 
+          className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
+          style={{
+            backgroundImage: "linear-gradient(rgba(165, 148, 249, 0.8), rgba(165, 148, 249, 0.8)), url('/images/about-hero.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <motion.div 
+            className="text-white px-4"
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
           >
-            <div className="text-white px-4">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                Become a Volunteer
-              </h1>
-              <p className="text-xl md:text-2xl">
-                {" "}
-                Join our mission to create a compassionate world for street
-                animals. <br /> Your time and skills can make a real difference!
-              </p>
-            </div>
-          </div>
-          </div>
-          <div className="max-w-4xl mx-auto mt-5 grid md:grid-cols-2 gap-8 mb-12 bg-white">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-bold text-[#A294F9] mb-4">
-                Why Volunteer With Us?
-              </h2>
+            <motion.h1 
+              className="text-4xl md:text-5xl font-bold mb-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+            >
+              Become a Volunteer
+            </motion.h1>
+            <motion.p 
+              className="text-xl md:text-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+            >
+              Join our mission to create a compassionate world for street
+              animals. <br /> Your time and skills can make a real difference!
+            </motion.p>
+          </motion.div>
+        </motion.div>
 
-              <div className="space-y-4">
-              
+        {/* Main Content Section */}
+        <motion.div 
+          className="max-w-4xl mx-auto mt-5 grid md:grid-cols-2 gap-8 mb-12 bg-white px-4"
+          ref={ref}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          variants={staggerContainer}
+        >
+          {/* Why Volunteer Section */}
+          <motion.div 
+            className="bg-white p-6 rounded-lg shadow-md"
+            variants={fadeIn}
+            whileHover={{ y: -5 }}
+          >
+            <motion.h2 
+              className="text-2xl font-bold text-[#A294F9] mb-6"
+              whileInView={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              Why Volunteer With Us?
+            </motion.h2>
 
-                <div className="flex items-start">
-                  <div className="bg-[#E5D9F2] p-2 rounded-full mr-4">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      className="text-[#A294F9]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#5E4FA2]">
-                      Be a Voice for the Voiceless
-                    </h3>
-                    <p className="text-sm text-[#5E4FA2]/90">
-                      Advocate for animals and raise awareness in your community
-                      about their rights and needs.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-[#E5D9F2] p-2 rounded-full mr-4">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      className="text-[#A294F9]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#5E4FA2]">
-                      Create Lifelong Memories
-                    </h3>
-                    <p className="text-sm text-[#5E4FA2]/90">
-                      Every rescue and recovery story becomes a cherished memory
-                      you'll carry forever.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-[#E5D9F2] p-2 rounded-full mr-4">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      className="text-[#A294F9]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#5E4FA2]">
-                      Make a Direct Impact
-                    </h3>
-                    <p className="text-sm text-[#5E4FA2]/90">
-                      See the immediate difference you make in animals' lives
-                      through rescue, care, and rehabilitation.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-[#E5D9F2] p-2 rounded-full mr-4">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      className="text-[#A294F9]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#5E4FA2]">
-                      Learn New Skills
-                    </h3>
-                    <p className="text-sm text-[#5E4FA2]/90">
-                      Gain hands-on experience in animal care, first aid, and
-                      community outreach.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-[#E5D9F2] p-2 rounded-full mr-4">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      className="text-[#A294F9]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#5E4FA2]">
-                      Join a Compassionate Community
-                    </h3>
-                    <p className="text-sm text-[#5E4FA2]/90">
-                      Connect with like-minded people who share your passion for
-                      animal welfare.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-[#E5D9F2] p-2 rounded-full mr-4">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      className="text-[#A294F9]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#5E4FA2]">
-                      Flexible Opportunities
-                    </h3>
-                    <p className="text-sm text-[#5E4FA2]/90">
-                      Choose from various roles that fit your schedule and
-                      interests - from field rescues to admin support.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="bg-[#E5D9F2] p-2 rounded-full mr-4">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      className="text-[#A294F9]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#5E4FA2]">
-                      Personal Growth
-                    </h3>
-                    <p className="text-sm text-[#5E4FA2]/90">
-                      Develop empathy, patience, and leadership skills while
-                      making a difference.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Volunteer Form */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-bold text-[#A294F9] mb-6">
-                Volunteer Application
-              </h2>
-
-              {submitStatus.message && (
-                <div
-                  className={`p-4 mb-4 rounded-md ${
-                    submitStatus.success
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
+            <div className="space-y-4">
+              {[
+                { 
+                  icon: faBullhorn, 
+                  title: "Be a Voice for the Voiceless", 
+                  text: "Advocate for animals and raise awareness in your community about their rights and needs.",
+                  bg: "bg-[#FFE8E8]", 
+                  color: "#FF6B6B" 
+                },
+                { 
+                  icon: faMemory, 
+                  title: "Create Lifelong Memories", 
+                  text: "Every rescue and recovery story becomes a cherished memory you'll carry forever.",
+                  bg: "bg-[#E5F9FF]", 
+                  color: "#00C2FF" 
+                },
+                { 
+                  icon: faHandHoldingHeart, 
+                  title: "Make a Direct Impact", 
+                  text: "See the immediate difference you make in animals' lives through rescue, care, and rehabilitation.",
+                  bg: "bg-[#FFF2E5]", 
+                  color: "#FF9F43" 
+                },
+                { 
+                  icon: faUsersRays, 
+                  title: "Learn New Skills", 
+                  text: "Gain hands-on experience in animal care, first aid, and community outreach.",
+                  bg: "bg-[#F0FFE5]", 
+                  color: "#6BCB77" 
+                },
+                { 
+                  icon: faUsers, 
+                  title: "Join a Compassionate Community", 
+                  text: "Connect with like-minded people who share your passion for animal welfare.",
+                  bg: "bg-[#F5E5FF]", 
+                  color: "#A459D1" 
+                },
+                { 
+                  icon: faCalendarAlt, 
+                  title: "Flexible Opportunities", 
+                  text: "Choose from various roles that fit your schedule and interests - from field rescues to admin support.",
+                  bg: "bg-[#E5ECFF]", 
+                  color: "#4D96FF" 
+                },
+                { 
+                  icon: faHeart, 
+                  title: "Personal Growth", 
+                  text: "Develop empathy, patience, and leadership skills while making a difference.",
+                  bg: "bg-[#FFE5F1]", 
+                  color: "#FF78C4" 
+                }
+              ].map((item, index) => (
+                <motion.div 
+                  key={index}
+                  className="flex items-start"
+                  variants={fadeIn}
+                  whileHover={{ x: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
                 >
-                  {submitStatus.message}
-                </div>
-              )}
+                  <motion.div 
+                    className={`${item.bg} p-2 rounded-full mr-4`}
+                    animate={pulseAnimation}
+                  >
+                    <FontAwesomeIcon
+                      icon={item.icon}
+                      className={`text-[${item.color}]`}
+                      style={{ color: item.color }}
+                    />
+                  </motion.div>
+                  <div>
+                    <h3 className="font-bold text-[#5E4FA2]">{item.title}</h3>
+                    <p className="text-sm text-[#5E4FA2]/90">{item.text}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Form fields remain unchanged */}
-                <div>
+          {/* Volunteer Form */}
+          <motion.div 
+            className="bg-white p-6 rounded-lg shadow-md"
+            variants={fadeIn}
+            whileHover={{ y: -5 }}
+          >
+            <motion.h2 
+              className="text-2xl font-bold text-[#A294F9] mb-6"
+              whileInView={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              Volunteer Application
+            </motion.h2>
+
+            {submitStatus.message && (
+              <motion.div
+                className={`p-4 mb-4 rounded-md ${
+                  submitStatus.success
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                {submitStatus.message}
+              </motion.div>
+            )}
+
+            <motion.form 
+              onSubmit={handleSubmit} 
+              className="space-y-4"
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
+            >
+              {[
+                { id: "fullName", label: "Full Name *", type: "text", required: true },
+                { id: "location", label: "Location (City/Area) *", type: "text", required: true },
+                { id: "mobile", label: "Mobile Number *", type: "tel", required: true },
+                { id: "email", label: "Email ID *", type: "email", required: true },
+                { id: "address", label: "Full Address", type: "textarea", required: false }
+              ].map((field, index) => (
+                <motion.div key={field.id} variants={fadeIn}>
                   <label
-                    htmlFor="fullName"
+                    htmlFor={field.id}
                     className="block text-sm font-medium text-[#5E4FA2] mb-1"
                   >
-                    Full Name *
+                    {field.label}
                   </label>
-                  <input
-                    type="text"
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  />
-                </div>
+                  {field.type === "textarea" ? (
+                    <motion.textarea
+                      id={field.id}
+                      name={field.id}
+                      value={formData[field.id]}
+                      onChange={handleChange}
+                      rows="3"
+                      className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+                      whileFocus={{ scale: 1.01 }}
+                    />
+                  ) : (
+                    <motion.input
+                      type={field.type}
+                      id={field.id}
+                      name={field.id}
+                      value={formData[field.id]}
+                      onChange={handleChange}
+                      required={field.required}
+                      className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+                      whileFocus={{ scale: 1.01 }}
+                    />
+                  )}
+                </motion.div>
+              ))}
 
-                <div>
-                  <label
-                    htmlFor="location"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Location (City/Area) *
-                  </label>
-                  <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="mobile"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Mobile Number *
-                  </label>
-                  <input
-                    type="tel"
-                    id="mobile"
-                    name="mobile"
-                    value={formData.mobile}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Email ID *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="address"
-                    className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                  >
-                    Full Address
-                  </label>
-                  <textarea
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    rows="3"
-                    className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-[#A294F9] text-white py-3 px-4 rounded-md hover:bg-[#8A7BD8] transition flex items-center justify-center font-medium disabled:opacity-50"
+              <motion.button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-[#A294F9] text-white py-3 px-4 rounded-md hover:bg-[#8A7BD8] transition flex items-center justify-center font-medium disabled:opacity-50"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                variants={fadeIn}
+              >
+                {isSubmitting ? "Submitting..." : "Submit Application"}
+                <motion.span 
+                  animate={isSubmitting ? { rotate: 360 } : {}}
+                  transition={isSubmitting ? { duration: 1, repeat: Infinity, ease: "linear" } : {}}
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Application"}
                   <FontAwesomeIcon icon={faHandsHelping} className="ml-2" />
-                </button>
-              </form>
-            </div>
-          </div>
+                </motion.span>
+              </motion.button>
+            </motion.form>
+          </motion.div>
+        </motion.div>
       </div>
       <Footer />
     </>
