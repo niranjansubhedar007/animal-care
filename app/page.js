@@ -32,16 +32,10 @@ import Navbar from "./navbar/page";
 import Slider from "./slider/page";
 
 const Home = () => {
-
-
-
   return (
     <>
-  <Navbar/>
+      <Navbar />
       <Slider />
-
-      
-      
     </>
   );
 };

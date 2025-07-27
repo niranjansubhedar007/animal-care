@@ -26,7 +26,7 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center justify-center">
             <img
-              src="/images/logonew.jpg"
+              src="/images/logonew.png"
               className="h-16 w-auto"
               alt="Animal Rescue Logo"
             />
@@ -132,14 +132,7 @@ export default function Footer() {
             <h3 className="text-xl font-bold text-[#A294F9]">Connect With Us</h3>
             
             <div className="flex space-x-4">
-              <Link 
-                href="https://www.facebook.com/hopeanimalcare/" 
-                target="_blank"
-                className="h-10 w-10 rounded-full bg-[#E5D9F2] flex items-center justify-center hover:bg-[#CDC1FF] transition"
-                aria-label="Facebook"
-              >
-                <FontAwesomeIcon icon={faFacebook} className="text-[#5E4FA2] text-xl hover:text-[#A294F9]" />
-              </Link>
+             
               <Link 
                 href="https://www.facebook.com/groups/hopeanimalswelfarefoundation/" 
                 target="_blank"
@@ -177,7 +170,8 @@ export default function Footer() {
                   View on Google Maps
                 </Link>
               </div>
-              <div className="flex items-center space-x-3 mt-2">
+
+              {/*    <div className="flex items-center space-x-3 mt-2">
                 <FontAwesomeIcon icon={faGlobe} className="h-5 w-5 text-[#A294F9]" />
                 <Link 
                   href="https://hope-animals-welfare-foundation.business.site/" 
@@ -186,7 +180,8 @@ export default function Footer() {
                 >
                   Our Business Site
                 </Link>
-              </div>
+              </div> */}
+           
             </div>
           </div>
         </div>

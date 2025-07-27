@@ -60,7 +60,7 @@ const Navbar = () => {
             transition={{ duration: 0.5 }}
           >
             <img
-              src="/images/logonew.jpg"
+              src="/images/logonew.png"
               className="h-10 w-auto md:h-12"
               alt="Animal Rescue Logo"
             />
