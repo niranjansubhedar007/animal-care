@@ -434,6 +434,8 @@ export default function ReviewsPage() {
               )}
             </div>
 
+         
+
             {reviews.length > 0 ? (
               <div className="relative">
                 <div className="overflow-hidden">
@@ -446,8 +448,7 @@ export default function ReviewsPage() {
                       className="grid grid-cols-1 md:grid-cols-3 gap-6"
                       variants={staggerContainer}
                       initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true }}
+                      animate="visible"
                     >
                       {getVisibleReviews().map((review) => (
                         <motion.div
@@ -458,20 +459,13 @@ export default function ReviewsPage() {
                         >
                           <div className="flex justify-center mb-2">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <motion.div
+                              <FontAwesomeIcon
                                 key={star}
-                                whileHover={{ scale: 1.2 }}
-                                whileTap={{ scale: 0.9 }}
-                              >
-                                <FontAwesomeIcon
-                                  icon={review.rating >= star ? solidStar : regularStar}
-                                  className={`text-xl ${
-                                    review.rating >= star
-                                      ? "text-yellow-400"
-                                      : "text-gray-300"
-                                  }`}
-                                />
-                              </motion.div>
+                                icon={review.rating >= star ? solidStar : regularStar}
+                                className={`text-xl ${
+                                  review.rating >= star ? "text-yellow-400" : "text-gray-300"
+                                }`}
+                              />
                             ))}
                           </div>
                           <p className="text-lg text-[#5E4FA2] mb-3 italic">
