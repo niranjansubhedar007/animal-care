@@ -25,12 +25,13 @@ export default function Footer() {
           {/* Logo and Contact Info */}
           <div className="space-y-4">
             <div className="flex items-center justify-center">
+            <Link href="/" className="flex items-center">
             <img
               src="/images/logonew.png"
               className="h-16 w-auto"
               alt="Animal Rescue Logo"
             />
-             
+            </Link>
             </div>
             
             <div className="space-y-3">
@@ -171,23 +172,26 @@ export default function Footer() {
                 </Link>
               </div>
 
-              {/*    <div className="flex items-center space-x-3 mt-2">
+              {/* 
+                    <div className="flex items-center space-x-3 mt-2">
                 <FontAwesomeIcon icon={faGlobe} className="h-5 w-5 text-[#A294F9]" />
                 <Link 
-                  href="https://hope-animals-welfare-foundation.business.site/" 
+                  href="https://www.hopeanimalcare.in/" 
                   target="_blank"
                   className="hover:text-[#A294F9] transition text-sm font-medium"
                 >
                   Our Business Site
                 </Link>
-              </div> */}
+              </div> 
+                */}
+         
            
             </div>
           </div>
         </div>
 
         <div className="border-t border-[#E5D9F2] pt-6 text-center text-sm">
-          <p>© {new Date().getFullYear()} Hope Animals Welfare Foundation. All rights reserved.</p>
+          <p>© 2021 Hope Animals Welfare Foundation. All rights reserved.</p>
           <p className="mt-2 text-xs text-[#5E4FA2]/80">
             Registered Non-Profit Organization | Thane, Maharashtra, India
           </p>

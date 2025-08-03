@@ -387,7 +387,7 @@ const Rescue = () => {
       <div className="font-sans bg-gradient-to-b from-[#F5F0FF] to-[#F0F5FF] overflow-hidden">
         {/* Hero Section */}
         <motion.div 
-          className="relative h-96 flex items-center justify-center text-center"
+          className="relative h-96 pt-13 flex items-center justify-center text-center"
           style={{
             backgroundImage: `linear-gradient(rgba(94, 79, 162, 0.85), rgba(94, 79, 162, 0.85)), url('/images/rescue-hero.jpg')`,
             backgroundSize: 'cover',

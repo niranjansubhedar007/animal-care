@@ -2,7 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 import Link from "next/link";
+import { Handshake } from 'lucide-react';
 
 const Slider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,31 +25,26 @@ const Slider = () => {
       image: "/images/dog-hero-1.jpg",
       heading: "Rescue a Dog, Gain a Loyal Friend",
       subheading: "Every dog deserves a second chance at happiness",
-      color: "#F5EFFF"
     },
     {
       image: "/images/cat-hero-1.jpg",
       heading: "Save a Cat, Save Nine Lives",
       subheading: "Help us protect these independent souls",
-      color: "#E5D9F2"
     },
     {
       image: "/images/cow-hero-1.jpg",
       heading: "Farm Animals Need Love Too",
       subheading: "Support our sanctuary for rescued farm animals",
-      color: "#CDC1FF"
     },
     {
       image: "/images/monkey-hero-1.jpg",
       heading: "Protect Wildlife, Preserve Nature",
       subheading: "Rescuing and rehabilitating wild animals",
-      color: "#A294F9"
     },
     {
       image: "/images/bird-1.jpg",
       heading: "Give Wings to Hope",
       subheading: "Saving injured birds and helping them soar again",
-      color: "#70B5D9"
     }
   ];
   
@@ -85,37 +82,41 @@ const Slider = () => {
               className="w-full h-64 object-cover"
             />
             <div className="flex items-center justify-center text-center p-4">
-              <div className="max-w-4xl px-6 py-8 rounded-xl" 
-                   style={{ backgroundColor: `${slide.color}CC` }}>
+              <motion.div 
+                className="max-w-4xl px-6 py-8 rounded-xl backdrop-blur-sm "
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                   {slide.heading}
                 </h1>
                 <p className="text-lg text-gray-700">
                   {slide.subheading}
                 </p>
-              </div>
-              
+              </motion.div>
             </div>
-            
           </div>
         ))}
         <div className="flex justify-center mt-4">
-           <Link href="volunteer">
-                <button 
-                  className="px-8 py-3 bg-[#A294F9] text-white rounded-full hover:bg-[#8A7BD8] transition duration-300 text-lg font-semibold shadow-lg"
-                >
-                  Join Our Mission
-                </button>
-                </Link>
+          <Link href="volunteer">
+            <motion.button 
+              className="px-8 py-3 bg-[#A294F9] cursor-pointer text-white rounded-full hover:bg-[#8A7BD8] transition duration-300 text-lg font-semibold shadow-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+  <Handshake className="w-5 h-5" />
 
-      </div>
+              Join Our Mission
+            </motion.button>
+          </Link>
+        </div>
       </div>
     );
   }
 
-  // Desktop view - keep original functionality
   return (
-    <div className="relative lg:h-screen md:h-96 h-80 bg-white overflow-hidden mt-20">
+    <div className="relative lg:h-screen md:h-96 h-80 bg-white overflow-hidden ">
       <div
         className="w-full h-full flex transition-transform duration-1000 ease-out"
         style={{
@@ -130,23 +131,30 @@ const Slider = () => {
               alt={`Slide ${index}`}
               className="w-full h-full object-cover"
             />
-            <div className="lg:absolute lg:inset-0 flex items-center justify-center text-center">
-              <div className="max-w-4xl px-6 py-8 rounded-xl" 
-                   style={{ backgroundColor: `${slide.color}CC` }}>
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-4">
+            <div className="absolute inset-0 flex items-center justify-center text-center">
+              <motion.div 
+                className="max-w-4xl px-8 py-10 rounded-xl backdrop-blur-[5px] bg-white/10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+              >
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
                   {slide.heading}
                 </h1>
-                <p className="text-lg md:text-2xl text-gray-700 mb-8">
+                <p className="text-lg md:text-2xl text-white mb-8">
                   {slide.subheading}
                 </p>
                 <Link href="volunteer">
-                <button 
-                  className="px-8 py-3 bg-[#A294F9] text-white rounded-full hover:bg-[#8A7BD8] transition duration-300 text-lg font-semibold shadow-lg"
-                >
-                  Join Our Mission
-                </button>
+               <motion.button 
+  className="px-6 py-2 bg-red-500 mx-auto text-white rounded-full hover:bg-red-600 cursor-pointer transition duration-300 text-lg font-semibold  text-center shadow-lg flex items-center justify-center gap-2"
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+>
+  <Handshake className="w-5 h-5" />
+  Join Our Mission
+</motion.button>
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </div>
         ))}
@@ -164,7 +172,6 @@ const Slider = () => {
         ))}
       </div>
       
-      {/* Navigation arrows */}
       <button
         className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 text-[#A294F9] p-3 rounded-full hover:bg-white transition duration-300 shadow-lg hidden md:block"
         onClick={goToPrevious}

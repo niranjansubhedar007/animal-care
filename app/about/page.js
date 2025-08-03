@@ -53,9 +53,9 @@ const About = () => {
       <div className="font-sans overflow-hidden">
         {/* Hero Section */}
         <motion.div 
-          className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
+          className="relative h-96 pt-13 flex items-center justify-center text-center"
           style={{
-            backgroundImage: "linear-gradient(rgba(165, 148, 249, 0.8), rgba(165, 148, 249, 0.8)), url('/images/about-hero.jpg')",
+            backgroundImage: `linear-gradient(rgba(94, 79, 162, 0.85), rgba(94, 79, 162, 0.85)), url('/images/rescue-hero.jpg')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
@@ -291,7 +291,7 @@ const About = () => {
             >
               <Link href="/donate">
                 <motion.button 
-                  className="bg-[#A294F9] hover:bg-[#8A7BD8] text-white font-bold py-3 px-8 rounded-full transition duration-300"
+                  className="bg-[#A294F9] hover:bg-[#8A7BD8] text-white font-bold py-2 px-5 rounded-full transition duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, x: -20 }}
@@ -304,7 +304,7 @@ const About = () => {
               </Link>
               <Link href="/volunteer">
                 <motion.button 
-                  className="bg-white border-2 border-[#A294F9] text-[#5E4FA2] hover:bg-[#F5EFFF] font-bold py-3 px-8 rounded-full transition duration-300"
+                  className="bg-white border-2 border-[#A294F9] text-[#5E4FA2] hover:bg-[#F5EFFF] font-bold py-2 px-5 rounded-full transition duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, x: 20 }}

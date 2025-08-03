@@ -13,6 +13,7 @@ import {
   faUserGrow,
   faUsersRays
 } from "@fortawesome/free-solid-svg-icons";
+import { Handshake } from 'lucide-react';
 import Navbar from "../navbar/page";
 import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
@@ -124,9 +125,9 @@ export default function Volunteer() {
       <div className="font-sans bg-white">
         {/* Hero Section with Animation */}
         <motion.div 
-          className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
+          className="relative h-96 pt-13 flex items-center justify-center text-center"
           style={{
-            backgroundImage: "linear-gradient(rgba(165, 148, 249, 0.8), rgba(165, 148, 249, 0.8)), url('/images/about-hero.jpg')",
+            backgroundImage: `linear-gradient(rgba(94, 79, 162, 0.85), rgba(94, 79, 162, 0.85)), url('/images/rescue-hero.jpg')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -299,11 +300,11 @@ export default function Volunteer() {
               variants={staggerContainer}
             >
               {[
-                { id: "fullName", label: "Full Name *", type: "text", required: true },
-                { id: "location", label: "Location (City/Area) *", type: "text", required: true },
-                { id: "mobile", label: "Mobile Number *", type: "tel", required: true },
-                { id: "email", label: "Email ID *", type: "email", required: true },
-                { id: "address", label: "Full Address", type: "textarea", required: false }
+                { id: "fullName", label: "Full Name", type: "text", required: true },
+                { id: "location", label: "Location (City/Area)", type: "text", required: true },
+                { id: "mobile", label: "Mobile Number", type: "tel", required: true },
+                { id: "email", label: "Email ID", type: "email", required: false },
+                { id: "address", label: "Address", type: "textarea", required: false }
               ].map((field, index) => (
                 <motion.div key={field.id} variants={fadeIn}>
                   <label
@@ -311,6 +312,7 @@ export default function Volunteer() {
                     className="block text-sm font-medium text-[#5E4FA2] mb-1"
                   >
                     {field.label}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
                   </label>
                   {field.type === "textarea" ? (
                     <motion.textarea
@@ -340,18 +342,21 @@ export default function Volunteer() {
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[#A294F9] text-white py-3 px-4 rounded-md hover:bg-[#8A7BD8] transition flex items-center justify-center font-medium disabled:opacity-50"
+                className="w-full bg-[#A294F9] text-white py-3 px-4 rounded-md hover:bg-[#8A7BD8] transition flex items-center justify-center font-medium disabled:opacity-50 gap-2"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 variants={fadeIn}
               >
-                {isSubmitting ? "Submitting..." : "Submit Application"}
-                <motion.span 
-                  animate={isSubmitting ? { rotate: 360 } : {}}
-                  transition={isSubmitting ? { duration: 1, repeat: Infinity, ease: "linear" } : {}}
-                >
-                  <FontAwesomeIcon icon={faHandsHelping} className="ml-2" />
-                </motion.span>
+                {isSubmitting ? "Submitting..." : "Submit"}
+                {!isSubmitting && <Handshake className="w-5 h-5" />}
+                {isSubmitting && (
+                  <motion.span 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <FontAwesomeIcon icon={faHandsHelping} />
+                  </motion.span>
+                )}
               </motion.button>
             </motion.form>
           </motion.div>

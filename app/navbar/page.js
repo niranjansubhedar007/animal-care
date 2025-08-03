@@ -7,7 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   faHeart, 
   faBars, 
-  faTimes 
+  faTimes,
+  faHandshake, // Added handshake icon for recruit
+  faPaw // Added paw icon for animal rescue
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
@@ -51,30 +53,34 @@ const Navbar = () => {
   return (
     <nav className="bg-[#F5EFFF] shadow-md fixed top-0 w-full z-50 font-sans">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
+        <div className="flex justify-between h-14 items-center">
           {/* Logo */}
-          <motion.div 
-            className="flex-shrink-0 flex items-center"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <img
-              src="/images/logonew.png"
-              className="h-10 w-auto md:h-12"
-              alt="Animal Rescue Logo"
-            />
-          </motion.div>
+          <Link href="/" className="flex items-center">
+            <motion.div 
+              className="flex-shrink-0 flex items-center"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <img
+                src="/images/logonew.png"
+                className="h-10 w-auto md:h-10"
+                alt="Animal Rescue Logo"
+              />
+            </motion.div>
+          </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {[
               { href: "/", label: "Home" },
               { href: "/about", label: "About" },
+              { href: "/animalRescue", label: "Animal Rescue" }, // Added Animal Rescue link
               { href: "/rescue", label: "Rescue Stories" },
               { href: "/how-to-help", label: "How to Help" },
               { href: "/review", label: "Review" },
               { href: "/volunteer", label: "Volunteer" },
+              { href: "/recruit", label: "Recruit" },
               { href: "/contact", label: "Contact" }
             ].map((link, index) => (
               <motion.div
@@ -83,7 +89,10 @@ const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.3 }}
               >
-                <Link href={link.href} className={desktopLinkClasses(link.href)}>
+                <Link href={link.href} className={`${desktopLinkClasses(link.href)} flex items-center`}>
+                  {link.icon && (
+                    <FontAwesomeIcon icon={link.icon} className="mr-2" />
+                  )}
                   {link.label}
                 </Link>
               </motion.div>
@@ -97,7 +106,7 @@ const Navbar = () => {
             >
               <Link href="/donate">
                 <motion.button 
-                  className="bg-[#EF476F] text-white px-6 py-2 rounded-full hover:bg-[#D43D63] transition flex items-center"
+                  className="bg-red-500 text-white px-6 py-1.5 rounded-full cursor-pointer hover:bg-red-600 transition flex items-center"
                   animate={pulseAnimation}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -151,10 +160,12 @@ const Navbar = () => {
           {[
             { href: "/", label: "Home" },
             { href: "/about", label: "About" },
+            { href: "/animalRescue", label: "Animal Rescue" }, // Added Animal Rescue link
             { href: "/rescue", label: "Rescue Stories" },
             { href: "/how-to-help", label: "How to Help" },
             { href: "/review", label: "Review" },
             { href: "/volunteer", label: "Volunteer" },
+            { href: "/recruit", label: "Recruit" },
             { href: "/contact", label: "Contact" }
           ].map((link, index) => (
             <motion.div
@@ -165,9 +176,12 @@ const Navbar = () => {
             >
               <Link 
                 href={link.href} 
-                className={linkClasses(link.href)}
+                className={`${linkClasses(link.href)} flex items-center`}
                 onClick={() => setIsMenuOpen(false)}
               >
+                {link.icon && (
+                  <FontAwesomeIcon icon={link.icon} className="mr-2" />
+                )}
                 {link.label}
               </Link>
             </motion.div>
@@ -184,12 +198,12 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               <motion.button 
-                className="w-full bg-[#EF476F] text-white px-6 py-2 rounded-full hover:bg-[#D43D63] transition flex items-center justify-center"
+                className="w-full bg-red-500 cursor-pointer text-white px-6 py-1.5 rounded-full hover:bg-red-600 transition flex items-center justify-center"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <motion.div 
-                  className=" rounded-full mr-2"
+                  className="rounded-full mr-2"
                   animate={heartBeat}
                 >
                   <FontAwesomeIcon 

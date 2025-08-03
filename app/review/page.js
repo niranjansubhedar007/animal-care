@@ -231,11 +231,10 @@ export default function ReviewsPage() {
       <div className="min-h-screen bg-[#F5EFFF] overflow-hidden">
         {/* Hero Header */}
         <motion.div 
-          className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
+          className="relative h-96 pt-13 flex items-center justify-center text-center"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(162, 148, 249, 0.8), rgba(162, 148, 249, 0.8)), url('/images/reviews-hero.jpg')",
-            backgroundSize: "cover",
+                       backgroundImage: `linear-gradient(rgba(94, 79, 162, 0.85), rgba(94, 79, 162, 0.85)), url('/images/rescue-hero.jpg')`,
+   backgroundSize: "cover",
             backgroundPosition: "center",
           }}
           initial={{ opacity: 0 }}

@@ -119,11 +119,10 @@ export default function ContactPage() {
       <div className="min-h-screen bg-[#F5EFFF]">
         {/* Hero Section with Animation */}
         <motion.div
-          className="relative h-96 bg-[#A294F9] flex items-center justify-center text-center"
+          className="relative h-96 pt-13 flex items-center justify-center text-center"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(162, 148, 249, 0.8), rgba(162, 148, 249, 0.8)), url('/images/contact-hero.jpg')",
-            backgroundSize: "cover",
+                     backgroundImage: `linear-gradient(rgba(94, 79, 162, 0.85), rgba(94, 79, 162, 0.85)), url('/images/rescue-hero.jpg')`,
+        backgroundSize: "cover",
             backgroundPosition: "center",
           }}
           initial={{ opacity: 0 }}
@@ -312,6 +311,7 @@ export default function ContactPage() {
             <motion.div 
               variants={fadeIn}
               whileHover={{ y: -5 }}
+              className="bg-white p-8 rounded-lg shadow-md"
             >
               <motion.h2 
                 className="text-3xl font-bold text-[#5E4FA2] mb-6"
@@ -336,119 +336,136 @@ export default function ContactPage() {
                   {submitStatus.message}
                 </motion.div>
               )}
+<motion.form 
+  onSubmit={handleSubmit} 
+  className="space-y-4"
+  initial="hidden"
+  animate="visible"
+  variants={staggerContainer}
+>
+  {[
+    { id: "name", label: "Your Name", type: "text", required: true },
+    { id: "email", label: "Email Address", type: "email", required: false },
+    { id: "phone", label: "Phone Number", type: "tel", required: true },
+    { id: "subject", label: "Subject", type: "select", required: true, options: [
+        { value: "", label: "Select a subject" },
+        { value: "Adoption", label: "Adoption Inquiry" },
+        { value: "Volunteer", label: "Volunteer Opportunity" },
+        { value: "Donation", label: "Donation Question" },
+        { value: "Rescue", label: "Animal Rescue" },
+        { value: "Other", label: "Other" }
+      ]
+    },
+    { id: "message", label: "Your Message", type: "textarea", required: false }
+  ].map((field, index) => (
+    <motion.div key={field.id} variants={fadeIn}>
+      <label
+        htmlFor={field.id}
+        className="block text-sm font-medium text-[#5E4FA2] mb-1"
+      >
+        {field.label}
+        {field.required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      {field.type === "textarea" ? (
+        <motion.textarea
+          id={field.id}
+          name={field.id}
+          value={formData[field.id]}
+          onChange={handleChange}
+          rows="5"
+          required={field.required}
+          className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+          whileFocus={{ scale: 1.01 }}
+        />
+      ) : field.type === "select" ? (
+        <motion.select
+          id={field.id}
+          name={field.id}
+          value={formData[field.id]}
+          onChange={handleChange}
+          required={field.required}
+          className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+          whileFocus={{ scale: 1.01 }}
+        >
+          {field.options.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </motion.select>
+      ) : (
+        <motion.input
+          type={field.type}
+          id={field.id}
+          name={field.id}
+          value={formData[field.id]}
+          onChange={handleChange}
+          required={field.required}
+          className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+          whileFocus={{ scale: 1.01 }}
+        />
+      )}
+    </motion.div>
+  ))}
 
-              <motion.form 
-                onSubmit={handleSubmit} 
-                className="space-y-4"
-                initial="hidden"
-                animate="visible"
-                variants={staggerContainer}
-              >
-                {[
-                  { id: "name", label: "Your Name *", type: "text", required: true },
-                  { id: "email", label: "Email Address *", type: "email", required: true },
-                  { id: "phone", label: "Phone Number", type: "tel", required: false },
-                  { id: "subject", label: "Subject *", type: "select", required: true, options: [
-                      { value: "", label: "Select a subject" },
-                      { value: "Adoption", label: "Adoption Inquiry" },
-                      { value: "Volunteer", label: "Volunteer Opportunity" },
-                      { value: "Donation", label: "Donation Question" },
-                      { value: "Rescue", label: "Animal Rescue" },
-                      { value: "Other", label: "Other" }
-                    ]
-                  },
-                  { id: "message", label: "Your Message *", type: "textarea", required: true }
-                ].map((field, index) => (
-                  <motion.div key={field.id} variants={fadeIn}>
-                    <label
-                      htmlFor={field.id}
-                      className="block text-sm font-medium text-[#5E4FA2] mb-1"
-                    >
-                      {field.label}
-                    </label>
-                    {field.type === "textarea" ? (
-                      <motion.textarea
-                        id={field.id}
-                        name={field.id}
-                        value={formData[field.id]}
-                        onChange={handleChange}
-                        rows="5"
-                        required={field.required}
-                        className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                        whileFocus={{ scale: 1.01 }}
-                      />
-                    ) : field.type === "select" ? (
-                      <motion.select
-                        id={field.id}
-                        name={field.id}
-                        value={formData[field.id]}
-                        onChange={handleChange}
-                        required={field.required}
-                        className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                        whileFocus={{ scale: 1.01 }}
-                      >
-                        {field.options.map(option => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </motion.select>
-                    ) : (
-                      <motion.input
-                        type={field.type}
-                        id={field.id}
-                        name={field.id}
-                        value={formData[field.id]}
-                        onChange={handleChange}
-                        required={field.required}
-                        className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                        whileFocus={{ scale: 1.01 }}
-                      />
-                    )}
-                  </motion.div>
-                ))}
-
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#A294F9] text-white py-3 px-6 rounded-md hover:bg-[#8A7BD8] transition font-medium disabled:opacity-50 w-full"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  variants={fadeIn}
-                >
-                  {isSubmitting ? (
-                    <motion.span
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    >
-                      Sending...
-                    </motion.span>
-                  ) : (
-                    "Send Message"
-                  )}
-                </motion.button>
-              </motion.form>
+  <motion.button
+    type="submit"
+    disabled={isSubmitting}
+    className="bg-[#A294F9] text-white py-3 px-6 rounded-md hover:bg-[#8A7BD8] transition font-medium disabled:opacity-50 w-full"
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    variants={fadeIn}
+  >
+    {isSubmitting ? (
+      <motion.span
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      >
+        Sending...
+      </motion.span>
+    ) : (
+      "Send Message"
+    )}
+  </motion.button>
+</motion.form>
             </motion.div>
           </div>
 
           {/* Map Section */}
-          <motion.div 
-            className="mt-16 bg-white rounded-lg shadow-md overflow-hidden"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3767.123456789012!2d72.98765432101234!3d19.123456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDA3JzI0LjQiTiA3MsKwNTknMTYuOCJF!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              title="Hope Animals Welfare Foundation Location"
-            ></iframe>
-          </motion.div>
+        <motion.div 
+  className="mt-16 bg-white rounded-lg shadow-md overflow-hidden"
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+  viewport={{ once: true }}
+>
+  <div className="p-4 bg-[#A294F9]">
+    <h3 className="text-xl font-bold text-white">Our Shelter Location</h3>
+  </div>
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3767.222239381036!2d72.9526694!3d19.2136347!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b99419b3d9c3%3A0x64ab1ba5ab83aa53!2sHOPE%20ANIMALS%20WELFARE%20FOUNDATION%20AND%20SHELTER!5e0!3m2!1sen!2sin!4v1712345678901!5m2!1sen!2sin"
+    width="100%"
+    height="450"
+    style={{ border: 0 }}
+    allowFullScreen=""
+    loading="lazy"
+    referrerPolicy="no-referrer-when-downgrade"
+    className="w-full"
+    title="Hope Animals Welfare Foundation Location"
+  ></iframe>
+  <div className="p-4 bg-gray-50">
+    <p className="text-[#5E4FA2] font-medium">
+      <FontAwesomeIcon icon={faMapMarkerAlt} className="text-[#EF476F] mr-2" />
+      Address: 9 Shastri Nagar, Near Yashodhan School, Thane, Maharashtra 400606
+    </p>
+    <p className="text-[#5E4FA2] mt-2">
+      <FontAwesomeIcon icon={faClock} className="text-[#EF476F] mr-2" />
+      Visiting Hours: Monday to Saturday: 9:00 AM - 6:00 PM
+
+Sunday: Closed
+    </p>
+  </div>
+</motion.div>
         </motion.div>
       </div>
       <Footer />
