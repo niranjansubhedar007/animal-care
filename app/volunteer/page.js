@@ -348,7 +348,6 @@ export default function Volunteer() {
                 variants={fadeIn}
               >
                 {isSubmitting ? "Submitting..." : "Submit"}
-                {!isSubmitting && <Handshake className="w-5 h-5" />}
                 {isSubmitting && (
                   <motion.span 
                     animate={{ rotate: 360 }}

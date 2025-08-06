@@ -82,38 +82,42 @@ const handleSubmit = async (e) => {
   try {
     let imageUrl = null;
 
+    // Upload image if provided
     if (formData.animalImage) {
       const fileExt = formData.animalImage.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-      const filePath = `animal-rescue/${fileName}`;
+      const filePath = `images/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('animal-rescue')
-        .upload(filePath, formData.animalImage);
+        .upload(filePath, formData.animalImage, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
         .from('animal-rescue')
         .getPublicUrl(filePath);
 
-      imageUrl = data.publicUrl;
+      imageUrl = publicUrl;
     }
 
+    // Insert into database
     const { error } = await supabase
-      .from('animal_rescue') // corrected table name
-      .insert([
-        {
-          name: formData.name,
-          number: formData.phone,
-          email: formData.email,
-          address: formData.address,
-          rescue_required: true,
-          urgency: formData.urgency,
-          animal_url: imageUrl,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      .from('animal_rescue')  // Make sure this matches your table name
+      .insert([{
+        name: formData.name,
+        email: formData.email,
+        number: formData.phone,
+        address: formData.address,
+        rescue_required: true,
+        urgency_level: formData.urgency,  // Changed to match your table column
+        animal_url: imageUrl,
+        notes: formData.notes
+      }]);
 
     if (error) throw error;
 
@@ -122,6 +126,7 @@ const handleSubmit = async (e) => {
       message: "Thank you for your rescue request! Our team will contact you soon.",
     });
 
+    // Reset form
     setFormData({
       name: "",
       email: "",
@@ -131,11 +136,12 @@ const handleSubmit = async (e) => {
       animalImage: null,
       notes: "",
     });
+
   } catch (error) {
     console.error("Error submitting form:", error);
     setSubmitStatus({
       success: false,
-      message: "There was an error submitting your request. Please try again.",
+      message: error.message || "There was an error submitting your request. Please try again.",
     });
   } finally {
     setIsSubmitting(false);
@@ -427,7 +433,7 @@ const handleSubmit = async (e) => {
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-[#EF476F] text-white py-3 px-6 rounded-md hover:bg-[#D43D63] transition font-medium disabled:opacity-50 w-full mt-6"
+                  className="w-full bg-[#A294F9] text-white py-3 px-4 rounded-md hover:bg-[#8A7BD8] transition flex items-center justify-center font-medium disabled:opacity-50 gap-2"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   variants={fadeIn}
@@ -440,7 +446,7 @@ const handleSubmit = async (e) => {
                       Submitting...
                     </motion.span>
                   ) : (
-                    "Submit Rescue Request"
+                    "Submit "
                   )}
                 </motion.button>
               </motion.form>

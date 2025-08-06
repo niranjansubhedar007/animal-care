@@ -352,7 +352,6 @@ export default function ContactPage() {
         { value: "Adoption", label: "Adoption Inquiry" },
         { value: "Volunteer", label: "Volunteer Opportunity" },
         { value: "Donation", label: "Donation Question" },
-        { value: "Rescue", label: "Animal Rescue" },
         { value: "Other", label: "Other" }
       ]
     },
