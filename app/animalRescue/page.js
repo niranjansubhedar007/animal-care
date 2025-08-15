@@ -60,13 +60,30 @@ export default function AnimalRescue() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  
+  if (name === "phone") {
+    // For phone field, only allow numbers and limit to 10 digits
+    const numericValue = value.replace(/\D/g, '').slice(0, 10);
+    setFormData((prev) => ({
+      ...prev,
+      [name]: numericValue,
+    }));
+  } else if (name === "name") {
+    // For name field, only allow letters and spaces
+    const lettersOnly = value.replace(/[^a-zA-Z\s]/g, '');
+    setFormData((prev) => ({
+      ...prev,
+      [name]: lettersOnly,
+    }));
+  } else {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }
+};
 
   const handleFileChange = (e) => {
     setFormData((prev) => ({
@@ -315,9 +332,11 @@ const handleSubmit = async (e) => {
                 variants={staggerContainer}
               >
                 {[
-                  { id: "name", label: "Your Name", type: "text", required: true },
+                  { id: "name", label: "Your Name", type: "text", required: true ,   pattern: "^[a-zA-Z ]+$",
+},
                   { id: "email", label: "Email Address", type: "email", required: false },
-                  { id: "phone", label: "Phone Number", type: "tel", required: true },
+                  { id: "phone", label: "Phone Number", type: "tel", required: true,  pattern: "[0-9]{10}",
+  maxLength: 10 },
                   { id: "address", label: "Rescue Location", type: "text", required: true },
                   { 
                     id: "urgency", 
@@ -356,16 +375,20 @@ const handleSubmit = async (e) => {
                         ))}
                       </motion.select>
                     ) : (
-                      <motion.input
-                        type={field.type}
-                        id={field.id}
-                        name={field.id}
-                        value={formData[field.id]}
-                        onChange={handleChange}
-                        required={field.required}
-                        className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                        whileFocus={{ scale: 1.01 }}
-                      />
+<motion.input
+  type={field.type}
+  id={field.id}
+  name={field.id}
+  value={formData[field.id]}
+  onChange={handleChange}
+  required={field.required}
+  className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+  whileFocus={{ scale: 1.01 }}
+  pattern={field.pattern}
+  maxLength={field.maxLength}
+  inputMode={field.type === "tel" ? "numeric" : undefined}
+  title={field.title}
+/>
                     )}
                   </motion.div>
                 ))}
@@ -440,8 +463,6 @@ const handleSubmit = async (e) => {
                 >
                   {isSubmitting ? (
                     <motion.span
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                     >
                       Submitting...
                     </motion.span>

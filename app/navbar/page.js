@@ -75,10 +75,10 @@ const Navbar = () => {
             {[
               { href: "/", label: "Home" },
               { href: "/about", label: "About" },
-              { href: "/animalRescue", label: "Animal Rescue" }, // Added Animal Rescue link
               { href: "/rescue", label: "Rescue Stories" },
               { href: "/how-to-help", label: "How to Help" },
               { href: "/review", label: "Review" },
+              { href: "/animalRescue", label: "Animal Rescue" }, // Added Animal Rescue link
               { href: "/volunteer", label: "Volunteer" },
               { href: "/recruit", label: "Recruit" },
               { href: "/contact", label: "Contact" }
@@ -160,10 +160,10 @@ const Navbar = () => {
           {[
             { href: "/", label: "Home" },
             { href: "/about", label: "About" },
-            { href: "/animalRescue", label: "Animal Rescue" }, // Added Animal Rescue link
             { href: "/rescue", label: "Rescue Stories" },
             { href: "/how-to-help", label: "How to Help" },
             { href: "/review", label: "Review" },
+            { href: "/animalRescue", label: "Animal Rescue" }, // Added Animal Rescue link
             { href: "/volunteer", label: "Volunteer" },
             { href: "/recruit", label: "Recruit" },
             { href: "/contact", label: "Contact" }

@@ -98,15 +98,41 @@ const Slider = () => {
             </div>
           </div>
         ))}
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mb-8">
           <Link href="volunteer">
             <motion.button 
-              className="px-8 py-3 bg-[#A294F9] cursor-pointer text-white rounded-full hover:bg-[#8A7BD8] transition duration-300 text-lg font-semibold shadow-lg"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2 bg-red-500 mx-auto text-white rounded-full hover:bg-red-600 cursor-pointer transition duration-300 text-lg font-semibold text-center shadow-lg flex items-center justify-center gap-2"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1,
+                transition: { 
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 10,
+                  delay: 0.3
+                }
+              }}
+              whileHover={{ 
+                scale: 1.05,
+                transition: { duration: 0.2 }
+              }}
+              whileTap={{ 
+                scale: 0.95,
+                transition: { duration: 0.1 }
+              }}
             >
-  <Handshake className="w-5 h-5" />
-
+              <motion.span
+                animate={{
+                  rotate: [0, 10, -10, 0],
+                  transition: { 
+                    repeat: Infinity, 
+                    repeatType: "reverse",
+                    duration: 2 
+                  }
+                }}
+              >
+              </motion.span>
               Join Our Mission
             </motion.button>
           </Link>
@@ -116,7 +142,7 @@ const Slider = () => {
   }
 
   return (
-    <div className="relative lg:h-screen md:h-96 h-80 bg-white overflow-hidden ">
+    <div className="relative lg:h-screen md:h-96 h-80 bg-white overflow-hidden">
       <div
         className="w-full h-full flex transition-transform duration-1000 ease-out"
         style={{
@@ -145,14 +171,35 @@ const Slider = () => {
                   {slide.subheading}
                 </p>
                 <Link href="volunteer">
-               <motion.button 
-  className="px-6 py-2 bg-red-500 mx-auto text-white rounded-full hover:bg-red-600 cursor-pointer transition duration-300 text-lg font-semibold  text-center shadow-lg flex items-center justify-center gap-2"
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
->
-  <Handshake className="w-5 h-5" />
-  Join Our Mission
-</motion.button>
+                  <motion.button 
+                    className="px-6 py-2 bg-red-500 mx-auto text-white rounded-full hover:bg-red-600 cursor-pointer transition duration-300 text-lg font-semibold text-center shadow-lg flex items-center justify-center gap-2"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ 
+                      opacity: 1, 
+                      y: 0,
+                      transition: { 
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 10,
+                        delay: 0.4
+                      }
+                    }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0px 5px 15px rgba(0,0,0,0.2)",
+                      transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ 
+                      scale: 0.95,
+                      transition: { duration: 0.1 }
+                    }}
+                  >
+                    <motion.span
+                      
+                    >
+                    </motion.span>
+                    Join Our Mission
+                  </motion.button>
                 </Link>
               </motion.div>
             </div>

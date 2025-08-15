@@ -113,8 +113,13 @@ export default function ReviewsPage() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+ if (name === "name" || name === "comment") {
+    // For name field, only allow letters and spaces
+    const lettersOnly = value.replace(/[^a-zA-Z\s]/g, '');
+    setNewReview((prev) => ({ ...prev, [name]: lettersOnly }));
+  } else {
     setNewReview((prev) => ({ ...prev, [name]: value }));
-  };
+  }  };
 
   const handleRating = (rating) => {
     setNewReview((prev) => ({ ...prev, rating }));
@@ -291,23 +296,25 @@ export default function ReviewsPage() {
                   htmlFor="name"
                   className="block text-sm font-medium text-[#5E4FA2] mb-1"
                 >
-                  Your Name *
+                  Your Name <span className="text-red-500">*</span>
                 </label>
-                <motion.input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={newReview.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                  whileFocus={{ scale: 1.01 }}
-                />
+             <motion.input
+  type="text"
+  id="name"
+  name="name"
+  value={newReview.name}
+  onChange={handleInputChange}
+  required
+  className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+  whileFocus={{ scale: 1.01 }}
+  pattern="^[a-zA-Z\s]+$"
+  title="Please enter only letters and spaces"
+/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-[#5E4FA2] mb-2">
-                  Your Rating *
+                  Your Rating <span className="text-red-500">*</span>
                 </label>
                 <div className="flex space-x-1">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -343,7 +350,7 @@ export default function ReviewsPage() {
                   htmlFor="comment"
                   className="block text-sm font-medium text-[#5E4FA2] mb-1"
                 >
-                  Your Review *
+                  Your Review <span className="text-red-500">*</span>
                 </label>
                 <motion.textarea
                   id="comment"
@@ -352,6 +359,7 @@ export default function ReviewsPage() {
                   onChange={handleInputChange}
                   rows="4"
                   required
+                  type="text"
                   className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
                   placeholder="Share your experience with Hope Animals Welfare Foundation..."
                   whileFocus={{ scale: 1.01 }}

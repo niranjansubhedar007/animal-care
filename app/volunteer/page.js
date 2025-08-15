@@ -67,14 +67,30 @@ export default function Volunteer() {
     transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  
+  if (name === "mobile") {
+    // For mobile field, only allow numbers and limit to 10 digits
+    const numericValue = value.replace(/\D/g, '').slice(0, 10);
+    setFormData((prev) => ({
+      ...prev,
+      [name]: numericValue,
+    }));
+  } else if (name === "fullName") {
+    // For name field, only allow letters and spaces
+    const lettersOnly = value.replace(/[^a-zA-Z\s]/g, '');
+    setFormData((prev) => ({
+      ...prev,
+      [name]: lettersOnly,
+    }));
+  } else {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
-
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -325,16 +341,19 @@ export default function Volunteer() {
                       whileFocus={{ scale: 1.01 }}
                     />
                   ) : (
-                    <motion.input
-                      type={field.type}
-                      id={field.id}
-                      name={field.id}
-                      value={formData[field.id]}
-                      onChange={handleChange}
-                      required={field.required}
-                      className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
-                      whileFocus={{ scale: 1.01 }}
-                    />
+               <motion.input
+  type={field.type}
+  id={field.id}
+  name={field.id}
+  value={formData[field.id]}
+  onChange={handleChange}
+  required={field.required}
+  className="w-full px-4 py-2 border border-[#CDC1FF] rounded-md focus:ring-2 focus:ring-[#A294F9] focus:border-transparent"
+  whileFocus={{ scale: 1.01 }}
+    pattern={field.pattern}
+  maxLength={field.maxLength}
+  inputMode={field.type === "tel" ? "numeric" : undefined}
+/>
                   )}
                 </motion.div>
               ))}

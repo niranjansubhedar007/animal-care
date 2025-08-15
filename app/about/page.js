@@ -291,7 +291,7 @@ const About = () => {
             >
               <Link href="/donate">
                 <motion.button 
-                  className="bg-[#A294F9] hover:bg-[#8A7BD8] text-white font-bold py-2 px-5 rounded-full transition duration-300"
+                  className="bg-[#A294F9] hover:bg-[#8A7BD8] text-white font-bold py-1.5 px-5 rounded-full transition duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, x: -20 }}
@@ -304,10 +304,10 @@ const About = () => {
               </Link>
               <Link href="/volunteer">
                 <motion.button 
-                  className="bg-white border-2 border-[#A294F9] text-[#5E4FA2] hover:bg-[#F5EFFF] font-bold py-2 px-5 rounded-full transition duration-300"
+                  className="bg-white border-1 border-[#A294F9] text-[#5E4FA2] hover:bg-[#F5EFFF] font-bold py-[6px] px-5 rounded-full transition duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4 }}
                   viewport={{ once: true }}
