@@ -10,6 +10,7 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { sendReviewNotificationEmail } from "@/services/nodemailer";
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState([]);
@@ -167,7 +168,17 @@ export default function ReviewsPage() {
         },
         ...prev,
       ]);
-
+  try {
+        await sendReviewNotificationEmail({
+          reviewerName: newReview.name,
+          rating: newReview.rating,
+          comment: newReview.comment,
+          date: new Date().toLocaleDateString()
+        });
+      } catch (emailError) {
+        console.error("Failed to send email notification:", emailError);
+        // Don't show email error to user - it shouldn't affect their review submission
+      }
       setSubmitStatus({
         success: true,
         message: "Thank you for your review!",
@@ -272,7 +283,7 @@ export default function ReviewsPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-2xl font-bold text-[#5E4FA2] mb-6">
-              Leave a Review
+              Leave a Reviewsss
             </h2>
 
             {submitStatus.message && (
