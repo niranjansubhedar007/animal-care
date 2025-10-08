@@ -130,77 +130,80 @@ export default function ReviewsPage() {
     setNewReview((prev) => ({ ...prev, hoverRating: rating }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!newReview.name || !newReview.rating || !newReview.comment) {
-      setSubmitStatus({
-        success: false,
-        message: "Please fill all required fields",
-      });
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!newReview.name || !newReview.rating || !newReview.comment) {
+    setSubmitStatus({
+      success: false,
+      message: "Please fill all required fields",
+    });
+    return;
+  }
 
-    setIsLoading(true);
-    setSubmitStatus({ success: false, message: "" });
+  setIsLoading(true);
+  setSubmitStatus({ success: false, message: "" });
 
-    try {
-      const { data, error } = await supabase
-        .from("reviews")
-        .insert([
-          {
-            name: newReview.name,
-            rating: newReview.rating,
-            comment: newReview.comment,
-          },
-        ])
-        .select();
-
-      if (error) throw error;
-
-      const addedReview = data[0];
-      setReviews((prev) => [
-        {
-          id: addedReview.id,
-          name: addedReview.name,
-          rating: addedReview.rating,
-          comment: addedReview.comment,
-          date: new Date(addedReview.created_at).toISOString().split("T")[0],
-        },
-        ...prev,
-      ]);
   try {
-        await sendReviewNotificationEmail({
-          reviewerName: newReview.name,
+    const { data, error } = await supabase
+      .from("reviews")
+      .insert([
+        {
+          name: newReview.name,
           rating: newReview.rating,
           comment: newReview.comment,
-          date: new Date().toLocaleDateString()
-        });
-      } catch (emailError) {
-        console.error("Failed to send email notification:", emailError);
-        // Don't show email error to user - it shouldn't affect their review submission
-      }
-      setSubmitStatus({
-        success: true,
-        message: "Thank you for your review!",
-      });
+        },
+      ])
+      .select();
 
-      setNewReview({
-        name: "",
-        rating: 0,
-        comment: "",
-        hoverRating: 0,
+    if (error) throw error;
+
+    const addedReview = data[0];
+    setReviews((prev) => [
+      {
+        id: addedReview.id,
+        name: addedReview.name,
+        rating: addedReview.rating,
+        comment: addedReview.comment,
+        date: new Date(addedReview.created_at).toISOString().split("T")[0],
+      },
+      ...prev,
+    ]);
+
+    // Test email functionality
+    console.log("Attempting to send email notification...");
+    try {
+      const emailResult = await sendReviewNotificationEmail({
+        reviewerName: newReview.name,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        date: new Date().toLocaleDateString()
       });
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      setSubmitStatus({
-        success: false,
-        message: "Failed to submit review. Please try again.",
-      });
-    } finally {
-      setIsLoading(false);
+      console.log("Email result:", emailResult);
+    } catch (emailError) {
+      console.error("Email error details:", emailError);
     }
-  };
 
+    setSubmitStatus({
+      success: true,
+      message: "Thank you for your review!",
+    });
+
+    setNewReview({
+      name: "",
+      rating: 0,
+      comment: "",
+      hoverRating: 0,
+    });
+  } catch (error) {
+    console.error("Error submitting review:", error);
+    setSubmitStatus({
+      success: false,
+      message: "Failed to submit review. Please try again.",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) =>
       prev >= Math.ceil(reviews.length / reviewsPerSlide) - 1 ? 0 : prev + 1
@@ -283,7 +286,7 @@ export default function ReviewsPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-2xl font-bold text-[#5E4FA2] mb-6">
-              Leave a Reviewsss
+              Leave a Review
             </h2>
 
             {submitStatus.message && (

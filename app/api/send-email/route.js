@@ -1,13 +1,19 @@
-// pages/api/send-email.js or api/send-email/route.js (for App Router)
 import nodemailer from "nodemailer";
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(request) {
   try {
-    const { to, subject, text, html } = req.body;
+    const { to, subject, text, html } = await request.json();
+
+    // Validate required fields
+    if (!to || !subject || !text) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: "Missing required fields: to, subject, text" 
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -24,12 +30,29 @@ export default async function handler(req, res) {
       to,
       subject,
       text,
-      html,
+      html: html || text, // Use html if provided, otherwise use text
     });
 
-    return res.status(200).json({ success: true, message: "Email sent!" });
+    return new Response(
+      JSON.stringify({ success: true, message: "Email sent successfully!" }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
     console.error("Email error:", error);
-    return res.status(500).json({ success: false, error: error.message });
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || "Failed to send email" 
+      }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
+}
+
+// Handle other methods
+export async function GET() {
+  return new Response(
+    JSON.stringify({ error: "Method not allowed" }),
+    { status: 405, headers: { 'Content-Type': 'application/json' } }
+  );
 }

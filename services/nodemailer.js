@@ -1,4 +1,3 @@
-// services/emailService.js
 import axios from "axios";
 
 /**
@@ -9,31 +8,74 @@ import axios from "axios";
  * @property {string} [html]
  */
 
-// Base email sender (calls vercel function)
+// Base email sender (calls API route)
 const sendEmail = async (payload) => {
   try {
     const res = await axios.post("/api/send-email", payload, {
       headers: { "Content-Type": "application/json" },
     });
 
-    return res.data; // { success: true, message: "Email sent!" }
+    return res.data;
   } catch (error) {
-    console.error("Email send error:", error);
-    return { success: false, error: error.message };
+    console.error("Email send error:", error.response?.data || error.message);
+    return { 
+      success: false, 
+      error: error.response?.data?.error || error.message 
+    };
   }
 };
 
-// Send review notification email
+export const sendLoginEmail = async (email) => {
+  const subject = "🔐 Login Notification - Hope Animal Care";
+
+  const textBody = `Hello,
+
+Your Hope Animal Care account was just logged in successfully.  
+
+If this was NOT you, please contact our support team immediately.
+
+Best regards,
+Hope Animal Care Team
+`;
+
+  const htmlBody = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; background: #f9f9f9; border-radius: 8px; padding: 20px; border: 1px solid #ddd;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="https://dummyimage.com/200x60/5E4FA2/ffffff&text=Hope+Animal+Care" alt="Hope Animal Care" style="max-width: 200px;"/>
+      </div>
+      <h2 style="color: #5E4FA2; text-align: center; margin-bottom: 20px;">🔐 Login Alert</h2>
+      <p style="color: #333; font-size: 16px;">
+        Hello,
+      </p>
+      <p style="color: #555; font-size: 15px; line-height: 1.6;">
+        Your Hope Animal Care account was just <strong>logged in successfully</strong>.
+      </p>
+      <p style="color: #555; font-size: 15px; line-height: 1.6;">
+        If this was <strong>NOT you</strong>, please <a href="mailto:info@hopeanimalcare.in" style="color:#5E4FA2;">contact our support team</a> immediately to secure your account.
+      </p>
+      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;"/>
+      <p style="color: #999; font-size: 12px; text-align: center;">
+        Hope Animal Care © ${new Date().getFullYear()} <br/>
+        This is an automated message. Please do not reply directly to this email.
+      </p>
+    </div>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject,
+    text: textBody,
+    html: htmlBody,
+  });
+};
+
 export const sendReviewNotificationEmail = async (reviewData) => {
   const subject = "⭐ New Review Received - Hope Animal Care";
-
-  const stars =
-    "⭐".repeat(reviewData.rating) + "☆".repeat(5 - reviewData.rating);
 
   const textBody = `New Review Received!
 
 Reviewer: ${reviewData.reviewerName}
-Rating: ${reviewData.rating}/5 ${stars}
+Rating: ${reviewData.rating}/5
 Date: ${reviewData.date}
 
 Review:
@@ -54,14 +96,12 @@ Hope Animal Care System
       
       <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #A294F9;">
         <div style="margin-bottom: 15px;">
-          <strong style="color: #5E4FA2;">Reviewer:</strong> ${
-            reviewData.reviewerName
-          }
+          <strong style="color: #5E4FA2;">Reviewer:</strong> ${reviewData.reviewerName}
         </div>
         <div style="margin-bottom: 15px;">
           <strong style="color: #5E4FA2;">Rating:</strong> 
           <span style="color: #FFD700; font-size: 18px;">
-            ${"★".repeat(reviewData.rating)}${"☆".repeat(5 - reviewData.rating)}
+            ${'★'.repeat(reviewData.rating)}${'☆'.repeat(5 - reviewData.rating)}
           </span>
           (${reviewData.rating}/5)
         </div>
@@ -84,14 +124,14 @@ Hope Animal Care System
 
       <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;"/>
       <p style="color: #999; font-size: 12px; text-align: center;">
-        Hope Animal Care © 2021 <br/>
+        Hope Animal Care © ${new Date().getFullYear()} <br/>
         This is an automated notification. Please do not reply directly to this email.
       </p>
     </div>
   `;
 
-  // Send to your admin email - you can configure this in environment variables
-  const adminEmail = process.env.SMTP_FROM;
+  // Use environment variable for admin email
+  const adminEmail = process.env.NEXT_PUBLIC_SMTP_FROM || "niranjansubhedar@gmail.com";
 
   return sendEmail({
     to: adminEmail,
