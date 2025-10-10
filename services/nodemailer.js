@@ -131,7 +131,7 @@ Hope Animal Care System
   `;
 
   // Use environment variable for admin email
-  const adminEmail = process.env.NEXT_PUBLIC_SMTP_FROM || "niranjansubhedar@gmail.com";
+  const adminEmail = process.env.NEXT_PUBLIC_SMTP_FROM ;
 
   return sendEmail({
     to: adminEmail,
