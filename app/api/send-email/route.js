@@ -7,7 +7,8 @@ export async function POST(request) {
     console.log("Email API called with:", { subject });
 
     // ✅ Automatically send to this email
-    const to = "nishu.pwr49@gmail.com";
+    // const to = "nishu.pwr49@gmail.com";
+    const to = "hopeanimalswelfarefoundation@gmail.com";
     // const to = "niranjansubhedar@gmail.com";
 
     // Validate required fields
