@@ -19,7 +19,7 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { sendVolunteerApplicationNotification, sendVolunteerApplicationConfirmation } from "@/services/nodemailer";
+import { sendVolunteerApplicationNotification } from "@/services/nodemailer";
 
 export default function Volunteer() {
   const [formData, setFormData] = useState({
@@ -155,16 +155,7 @@ const handleSubmit = async (e) => {
       address: formData.address
     });
 
-    // Send confirmation to volunteer if email provided
-    if (formData.email) {
-      await sendVolunteerApplicationConfirmation({
-        fullName: formData.fullName,
-        location: formData.location,
-        mobile: formData.mobile,
-        email: formData.email,
-        address: formData.address
-      });
-    }
+ 
 
     // Step 2: Insert into database
     const { data, error } = await supabase

@@ -17,7 +17,7 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { sendJobApplicationNotification, sendJobApplicationConfirmation } from "@/services/nodemailer";
+import { sendJobApplicationNotification } from "@/services/nodemailer";
 
 export default function Recruit() {
   const [formData, setFormData] = useState({
@@ -201,14 +201,6 @@ const handleSubmit = async (e) => {
       resumeUrl: resumeUrl
     });
 
-    // Send confirmation to applicant
-    await sendJobApplicationConfirmation({
-      name: formData.name,
-      email: formData.email,
-      number: formData.number,
-      education: formData.education,
-      address: formData.address
-    });
 
     // Step 2: Insert the record into the resume table
     const { data, error } = await supabase

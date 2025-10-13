@@ -13,7 +13,7 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { sendContactFormNotification, sendContactFormConfirmation } from "@/services/nodemailer";
+import { sendContactFormNotification } from "@/services/nodemailer";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -148,16 +148,7 @@ const handleSubmit = async (e) => {
       message: formData.message
     });
 
-    // Send confirmation to user if email provided
-    if (formData.email) {
-      await sendContactFormConfirmation({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        subject: formData.subject,
-        message: formData.message
-      });
-    }
+ 
 
     // Step 2: Insert into database
     const { data, error } = await supabase
