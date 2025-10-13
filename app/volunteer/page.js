@@ -19,6 +19,7 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { sendVolunteerApplicationNotification, sendVolunteerApplicationConfirmation } from "@/services/nodemailer";
 
 export default function Volunteer() {
   const [formData, setFormData] = useState({
@@ -91,49 +92,120 @@ const handleChange = (e) => {
     }));
   }
 };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus({ success: false, message: "" });
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsSubmitting(true);
+  //   setSubmitStatus({ success: false, message: "" });
 
-    try {
-      const { data, error } = await supabase
-        .from("volunteers")
-        .insert([
-          {
-            full_name: formData.fullName,
-            location: formData.location,
-            mobile: formData.mobile,
-            address: formData.address,
-            email: formData.email,
-          },
-        ])
-        .select();
+  //   try {
+  //     const { data, error } = await supabase
+  //       .from("volunteers")
+  //       .insert([
+  //         {
+  //           full_name: formData.fullName,
+  //           location: formData.location,
+  //           mobile: formData.mobile,
+  //           address: formData.address,
+  //           email: formData.email,
+  //         },
+  //       ])
+  //       .select();
 
-      if (error) throw error;
+  //     if (error) throw error;
 
-      setSubmitStatus({
-        success: true,
-        message: "Thank you for your application! We'll contact you soon.",
+  //     setSubmitStatus({
+  //       success: true,
+  //       message: "Thank you for your application! We'll contact you soon.",
+  //     });
+
+  //     // Reset form
+  //     setFormData({
+  //       fullName: "",
+  //       location: "",
+  //       mobile: "",
+  //       address: "",
+  //       email: "",
+  //     });
+  //   } catch (error) {
+  //     setSubmitStatus({
+  //       success: false,
+  //       message: "Failed to submit. Please try again later.",
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setSubmitStatus({ success: false, message: "" });
+
+  try {
+    // Step 1: Send email notifications
+    console.log("Sending volunteer application notifications...");
+    
+    // Send notification to admin
+    await sendVolunteerApplicationNotification({
+      fullName: formData.fullName,
+      location: formData.location,
+      mobile: formData.mobile,
+      email: formData.email,
+      address: formData.address
+    });
+
+    // Send confirmation to volunteer if email provided
+    if (formData.email) {
+      await sendVolunteerApplicationConfirmation({
+        fullName: formData.fullName,
+        location: formData.location,
+        mobile: formData.mobile,
+        email: formData.email,
+        address: formData.address
       });
-
-      // Reset form
-      setFormData({
-        fullName: "",
-        location: "",
-        mobile: "",
-        address: "",
-        email: "",
-      });
-    } catch (error) {
-      setSubmitStatus({
-        success: false,
-        message: "Failed to submit. Please try again later.",
-      });
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+
+    // Step 2: Insert into database
+    const { data, error } = await supabase
+      .from("volunteers")
+      .insert([
+        {
+          full_name: formData.fullName,
+          location: formData.location,
+          mobile: formData.mobile,
+          address: formData.address,
+          email: formData.email,
+        },
+      ])
+      .select();
+
+    if (error) throw error;
+
+    setSubmitStatus({
+      success: true,
+      message: "Thank you for your application! We'll contact you soon.",
+    });
+
+    // Reset form
+    setFormData({
+      fullName: "",
+      location: "",
+      mobile: "",
+      address: "",
+      email: "",
+    });
+
+  } catch (error) {
+    console.error("Error submitting volunteer application:", error);
+    setSubmitStatus({
+      success: false,
+      message: "Failed to submit. Please try again later.",
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <>

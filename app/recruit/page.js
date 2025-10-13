@@ -17,8 +17,9 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { sendJobApplicationNotification, sendJobApplicationConfirmation } from "@/services/nodemailer";
 
-export default function Recrui() {
+export default function Recruit() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -93,74 +94,163 @@ export default function Recrui() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsSubmitting(true);
 
-    try {
-      // First upload the PDF file
-      let resumeUrl = null;
-      if (formData.resume) {
-        const fileExt = formData.resume.name.split(".").pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `resume/${fileName}`;
+  //   try {
+  //     // First upload the PDF file
+  //     let resumeUrl = null;
+  //     if (formData.resume) {
+  //       const fileExt = formData.resume.name.split(".").pop();
+  //       const fileName = `${Math.random()}.${fileExt}`;
+  //       const filePath = `resume/${fileName}`;
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("resume")
-          .upload(filePath, formData.resume);
+  //       const { data: uploadData, error: uploadError } = await supabase.storage
+  //         .from("resume")
+  //         .upload(filePath, formData.resume);
 
-        if (uploadError) throw uploadError;
+  //       if (uploadError) throw uploadError;
 
-        // Get the public URL
-        const { data: urlData } = supabase.storage
-          .from("resume")
-          .getPublicUrl(filePath);
+  //       // Get the public URL
+  //       const { data: urlData } = supabase.storage
+  //         .from("resume")
+  //         .getPublicUrl(filePath);
 
-        resumeUrl = urlData.publicUrl;
-      }
+  //       resumeUrl = urlData.publicUrl;
+  //     }
 
-      // Then insert the record into the resume table
-      const { data, error } = await supabase
+  //     // Then insert the record into the resume table
+  //     const { data, error } = await supabase
+  //       .from("resume")
+  //       .insert([
+  //         {
+  //           name: formData.name,
+  //           email: formData.email,
+  //           number: formData.number,
+  //           education: formData.education,
+  //           address: formData.address,
+  //           resume_url: resumeUrl,
+  //         },
+  //       ])
+  //       .select();
+
+  //     if (error) throw error;
+
+  //     setSubmitStatus({
+  //       success: true,
+  //       message:
+  //         "Thank you for your application! We'll review your information and contact you soon.",
+  //     });
+  //     setFormData({
+  //       name: "",
+  //       email: "",
+  //       number: "",
+  //       education: "",
+  //       address: "",
+  //       resume: null,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error);
+  //     setSubmitStatus({
+  //       success: false,
+  //       message:
+  //         "There was an error submitting your application. Please try again.",
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  try {
+    // First upload the PDF file
+    let resumeUrl = null;
+    if (formData.resume) {
+      const fileExt = formData.resume.name.split(".").pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `resume/${fileName}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from("resume")
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            number: formData.number,
-            education: formData.education,
-            address: formData.address,
-            resume_url: resumeUrl,
-          },
-        ])
-        .select();
+        .upload(filePath, formData.resume);
 
-      if (error) throw error;
+      if (uploadError) throw uploadError;
 
-      setSubmitStatus({
-        success: true,
-        message:
-          "Thank you for your application! We'll review your information and contact you soon.",
-      });
-      setFormData({
-        name: "",
-        email: "",
-        number: "",
-        education: "",
-        address: "",
-        resume: null,
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      setSubmitStatus({
-        success: false,
-        message:
-          "There was an error submitting your application. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
+      // Get the public URL
+      const { data: urlData } = supabase.storage
+        .from("resume")
+        .getPublicUrl(filePath);
+
+      resumeUrl = urlData.publicUrl;
     }
-  };
 
+    // Step 1: Send email notifications
+    console.log("Sending job application notifications...");
+    
+    // Send notification to admin/HR
+    await sendJobApplicationNotification({
+      name: formData.name,
+      email: formData.email,
+      number: formData.number,
+      education: formData.education,
+      address: formData.address,
+      resumeUrl: resumeUrl
+    });
+
+    // Send confirmation to applicant
+    await sendJobApplicationConfirmation({
+      name: formData.name,
+      email: formData.email,
+      number: formData.number,
+      education: formData.education,
+      address: formData.address
+    });
+
+    // Step 2: Insert the record into the resume table
+    const { data, error } = await supabase
+      .from("resume")
+      .insert([
+        {
+          name: formData.name,
+          email: formData.email,
+          number: formData.number,
+          education: formData.education,
+          address: formData.address,
+          resume_url: resumeUrl,
+        },
+      ])
+      .select();
+
+    if (error) throw error;
+
+    setSubmitStatus({
+      success: true,
+      message:
+        "Thank you for your application! We'll review your information and contact you soon.",
+    });
+    setFormData({
+      name: "",
+      email: "",
+      number: "",
+      education: "",
+      address: "",
+      resume: null,
+    });
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    setSubmitStatus({
+      success: false,
+      message:
+        "There was an error submitting your application. Please try again.",
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   return (
     <>
       <Navbar />

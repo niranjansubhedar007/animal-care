@@ -15,6 +15,7 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { sendRescueRequestNotification, sendRescueRequestConfirmation } from "@/services/nodemailer";
 
 export default function AnimalRescue() {
   const [formData, setFormData] = useState({
@@ -92,6 +93,80 @@ const handleChange = (e) => {
     }));
   };
 
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   setIsSubmitting(true);
+
+//   try {
+//     let imageUrl = null;
+
+//     // Upload image if provided
+//     if (formData.animalImage) {
+//       const fileExt = formData.animalImage.name.split('.').pop();
+//       const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+//       const filePath = `images/${fileName}`;
+
+//       const { error: uploadError } = await supabase.storage
+//         .from('animal-rescue')
+//         .upload(filePath, formData.animalImage, {
+//           cacheControl: '3600',
+//           upsert: false
+//         });
+
+//       if (uploadError) throw uploadError;
+
+//       // Get public URL
+//       const { data: { publicUrl } } = supabase.storage
+//         .from('animal-rescue')
+//         .getPublicUrl(filePath);
+
+//       imageUrl = publicUrl;
+//     }
+
+//     // Insert into database
+//     const { error } = await supabase
+//       .from('animal_rescue')  // Make sure this matches your table name
+//       .insert([{
+//         name: formData.name,
+//         email: formData.email,
+//         number: formData.phone,
+//         address: formData.address,
+//         rescue_required: true,
+//         urgency_level: formData.urgency,  // Changed to match your table column
+//         animal_url: imageUrl,
+//         notes: formData.notes
+//       }]);
+
+//     if (error) throw error;
+
+//     setSubmitStatus({
+//       success: true,
+//       message: "Thank you for your rescue request! Our team will contact you soon.",
+//     });
+
+//     // Reset form
+//     setFormData({
+//       name: "",
+//       email: "",
+//       phone: "",
+//       address: "",
+//       urgency: "not urgent",
+//       animalImage: null,
+//       notes: "",
+//     });
+
+//   } catch (error) {
+//     console.error("Error submitting form:", error);
+//     setSubmitStatus({
+//       success: false,
+//       message: error.message || "There was an error submitting your request. Please try again.",
+//     });
+//   } finally {
+//     setIsSubmitting(false);
+//   }
+// };
+
+
 const handleSubmit = async (e) => {
   e.preventDefault();
   setIsSubmitting(true);
@@ -122,16 +197,42 @@ const handleSubmit = async (e) => {
       imageUrl = publicUrl;
     }
 
-    // Insert into database
+    // Step 1: Send email notifications
+    console.log("Sending rescue request notifications...");
+    
+    // Send notification to admin
+    await sendRescueRequestNotification({
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      address: formData.address,
+      urgency: formData.urgency,
+      animalImage: imageUrl,
+      notes: formData.notes
+    });
+
+    // Send confirmation to user if email provided
+    if (formData.email) {
+      await sendRescueRequestConfirmation({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        address: formData.address,
+        urgency: formData.urgency,
+        notes: formData.notes
+      });
+    }
+
+    // Step 2: Insert into database
     const { error } = await supabase
-      .from('animal_rescue')  // Make sure this matches your table name
+      .from('animal_rescue')
       .insert([{
         name: formData.name,
         email: formData.email,
         number: formData.phone,
         address: formData.address,
         rescue_required: true,
-        urgency_level: formData.urgency,  // Changed to match your table column
+        urgency_level: formData.urgency,
         animal_url: imageUrl,
         notes: formData.notes
       }]);
@@ -164,8 +265,6 @@ const handleSubmit = async (e) => {
     setIsSubmitting(false);
   }
 };
-
-
 
 
   return (

@@ -13,6 +13,7 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { sendContactFormNotification, sendContactFormConfirmation } from "@/services/nodemailer";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -86,50 +87,117 @@ export default function ContactPage() {
   }
 };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsSubmitting(true);
 
-    try {
-      const { data, error } = await supabase
-        .from('contacts')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            subject: formData.subject,
-            message: formData.message
-          }
-        ])
-        .select();
+  //   try {
+  //     const { data, error } = await supabase
+  //       .from('contacts')
+  //       .insert([
+  //         {
+  //           name: formData.name,
+  //           email: formData.email,
+  //           phone: formData.phone,
+  //           subject: formData.subject,
+  //           message: formData.message
+  //         }
+  //       ])
+  //       .select();
 
-      if (error) {
-        throw error;
-      }
+  //     if (error) {
+  //       throw error;
+  //     }
 
-      setSubmitStatus({
-        success: true,
-        message: "Thank you for your message! We'll contact you soon.",
+  //     setSubmitStatus({
+  //       success: true,
+  //       message: "Thank you for your message! We'll contact you soon.",
+  //     });
+  //     setFormData({
+  //       name: "",
+  //       email: "",
+  //       phone: "",
+  //       subject: "",
+  //       message: "",
+  //     });
+  //   } catch (error) {
+  //     console.error('Error submitting form:', error);
+  //     setSubmitStatus({
+  //       success: false,
+  //       message: "There was an error submitting your form. Please try again.",
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  try {
+    // Step 1: Send email notifications
+    console.log("Sending contact form notifications...");
+    
+    // Send notification to admin
+    await sendContactFormNotification({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      subject: formData.subject,
+      message: formData.message
+    });
+
+    // Send confirmation to user if email provided
+    if (formData.email) {
+      await sendContactFormConfirmation({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message
       });
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-      });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitStatus({
-        success: false,
-        message: "There was an error submitting your form. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
     }
-  };
 
+    // Step 2: Insert into database
+    const { data, error } = await supabase
+      .from('contacts')
+      .insert([
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message
+        }
+      ])
+      .select();
+
+    if (error) {
+      throw error;
+    }
+
+    setSubmitStatus({
+      success: true,
+      message: "Thank you for your message! We'll contact you soon.",
+    });
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      subject: "",
+      message: "",
+    });
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    setSubmitStatus({
+      success: false,
+      message: "There was an error submitting your form. Please try again.",
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   return (
     <>
       <Navbar />
