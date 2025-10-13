@@ -15,7 +15,7 @@ import Footer from "../footer/page";
 import { supabase } from "@/utils/supabase";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { sendRescueRequestNotification, sendRescueRequestConfirmation } from "@/services/nodemailer";
+import { sendRescueRequestNotification } from "@/services/nodemailer";
 
 export default function AnimalRescue() {
   const [formData, setFormData] = useState({
@@ -211,17 +211,6 @@ const handleSubmit = async (e) => {
       notes: formData.notes
     });
 
-    // Send confirmation to user if email provided
-    if (formData.email) {
-      await sendRescueRequestConfirmation({
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        address: formData.address,
-        urgency: formData.urgency,
-        notes: formData.notes
-      });
-    }
 
     // Step 2: Insert into database
     const { error } = await supabase
