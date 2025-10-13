@@ -276,32 +276,8 @@ export const sendRescueRequestNotification = async (rescueData) => {
               : ""
           }
 
-          <!-- Quick Actions -->
-          <div class="section" style="text-align: center; background: #f8f9fa; padding: 20px; border-radius: 8px;">
-            <h3 style="color: #5E4FA2; margin-top: 0;">Quick Actions</h3>
-            <a href="tel:${
-              rescueData.phone
-            }" class="action-btn">📞 Call Requester</a>
-            ${
-              rescueData.email
-                ? `<a href="mailto:${rescueData.email}" class="action-btn">✉️ Email Requester</a>`
-                : ""
-            }
-          </div>
-
-          <!-- Submission Info -->
-          <div class="section" style="background: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107;">
-            <strong>📋 Submission Details:</strong><br>
-            Request ID: #${Math.random()
-              .toString(36)
-              .substr(2, 9)
-              .toUpperCase()}<br>
-            Submitted: ${new Date().toLocaleString("en-IN", {
-              timeZone: "Asia/Kolkata",
-              dateStyle: "full",
-              timeStyle: "medium",
-            })}
-          </div>
+        
+     
         </div>
 
         <!-- Footer -->
@@ -351,7 +327,6 @@ ${rescueData.notes}
 SUBMISSION DETAILS:
 -------------------
 Submitted: ${new Date().toLocaleString()}
-Request ID: #${Math.random().toString(36).substr(2, 9).toUpperCase()}
 
 Please take immediate action if this is an emergency!
 
@@ -460,18 +435,7 @@ export const sendVolunteerApplicationNotification = async (volunteerData) => {
             ` : ''}
           </div>
 
-          <!-- Quick Actions -->
-          <div class="section">
-            <div class="highlight-box">
-              <h4 style="color: #5E4FA2; margin-top: 0;">🚀 Quick Actions</h4>
-              <div style="text-align: center; margin: 15px 0;">
-                <a href="tel:${volunteerData.mobile}" class="action-btn">📞 Call Applicant</a>
-                ${volunteerData.email ? `<a href="mailto:${volunteerData.email}" class="action-btn">✉️ Send Welcome</a>` : ''}
-                <a href="#" class="action-btn" style="background: #059669;">📅 Schedule Interview</a>
-              </div>
-            </div>
-          </div>
-
+   
           <!-- Application Info -->
           <div class="section">
             <div style="background: #E3F2FD; padding: 15px; border-radius: 5px; border-left: 4px solid #2196F3;">
@@ -854,17 +818,7 @@ export const sendJobApplicationNotification = async (applicationData) => {
             </div>
           </div>
 
-          <!-- Quick Actions -->
-          <div class="section">
-            <div class="highlight-box">
-              <h4 style="color: #5E4FA2; margin-top: 0;">🚀 Quick Actions</h4>
-              <div style="text-align: center; margin: 15px 0;">
-                <a href="tel:${applicationData.number}" class="action-btn">📞 Call Applicant</a>
-                <a href="mailto:${applicationData.email}" class="action-btn">✉️ Send Response</a>
-                <a href="#" class="action-btn" style="background: #059669;">📅 Schedule Interview</a>
-              </div>
-            </div>
-          </div>
+      
 
           <!-- Application Info -->
           <div class="section">
@@ -1259,18 +1213,6 @@ export const sendContactFormNotification = async (contactData) => {
           </div>
           ` : ''}
 
-          <!-- Quick Actions -->
-          <div class="section">
-            <div class="highlight-box">
-              <h4 style="color: #5E4FA2; margin-top: 0;">🚀 Quick Actions</h4>
-              <div style="text-align: center; margin: 15px 0;">
-                <a href="tel:${contactData.phone}" class="action-btn">📞 Call Back</a>
-                ${contactData.email ? `<a href="mailto:${contactData.email}" class="action-btn">✉️ Reply via Email</a>` : ''}
-                <a href="mailto:info@hopeanimalcare.in?subject=Re: ${contactData.subject}&body=Hi ${contactData.name},%0D%0A%0D%0AThank you for contacting Hope Animal Care..." class="action-btn" style="background: #059669;">📝 Prepare Response</a>
-              </div>
-            </div>
-          </div>
-
           <!-- Submission Info -->
           <div class="section">
             <div style="background: #E3F2FD; padding: 15px; border-radius: 5px; border-left: 4px solid #2196F3;">
@@ -1354,7 +1296,6 @@ ${contactData.message}
 
 SUBMISSION DETAILS:
 -------------------
-Contact ID: #CON${Math.random().toString(36).substr(2, 6).toUpperCase()}
 Submitted: ${new Date().toLocaleString()}
 Priority: ${contactData.subject === 'Adoption' ? 'HIGH' : contactData.subject === 'Volunteer' ? 'MEDIUM' : 'NORMAL'}
 Status: Awaiting Response
@@ -1590,6 +1531,316 @@ Hope Animal Care Team
 
   return sendEmail({
     to: contactData.email,
+    subject,
+    text: textBody,
+    html: htmlBody,
+  });
+};
+
+export const sendRescueRequestConfirmation = async (userData) => {
+  const urgencyColors = {
+    'emergency': '#DC2626',
+    'urgent': '#EA580C', 
+    'not urgent': '#059669'
+  };
+
+  const urgencyIcons = {
+    'emergency': '🚨',
+    'urgent': '⚠️',
+    'not urgent': '✅'
+  };
+
+  const subject = `${urgencyIcons[userData.urgency]} Animal Rescue Request Confirmation - Hope Animal Care`;
+
+  const htmlBody = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+        .header { background: #5E4FA2; padding: 25px; text-align: center; }
+        .urgency-banner { background: ${urgencyColors[userData.urgency]}; color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 18px; }
+        .content { padding: 30px; }
+        .section { margin-bottom: 25px; }
+        .detail-card { background: #F8FAFC; padding: 20px; border-radius: 8px; border-left: 4px solid #5E4FA2; margin: 20px 0; }
+        .detail-row { display: flex; margin-bottom: 12px; padding: 10px 0; border-bottom: 1px solid #E2E8F0; }
+        .detail-label { font-weight: bold; width: 150px; color: #5E4FA2; flex-shrink: 0; }
+        .detail-value { flex: 1; color: #4A5568; }
+        .emergency-contact { background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #FECACA; margin: 25px 0; }
+        .next-steps { background: #F0FFF4; padding: 20px; border-radius: 8px; border: 1px solid #C6F6D5; }
+        .footer { background: #F7FAFC; padding: 25px; text-align: center; font-size: 12px; color: #718096; border-top: 1px solid #E2E8F0; }
+        .step { display: flex; align-items: flex-start; margin-bottom: 20px; }
+        .step-number { background: #5E4FA2; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; flex-shrink: 0; }
+        .step-content { flex: 1; }
+        .thank-you { background: linear-gradient(135deg, #A294F9, #5E4FA2); color: white; padding: 25px; border-radius: 8px; text-align: center; margin-bottom: 25px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <!-- Header -->
+        <div class="header">
+          <h1 style="color: white; margin: 0; font-size: 28px;">🐾 Hope Animal Care</h1>
+          <p style="color: white; margin: 8px 0 0 0; opacity: 0.9; font-size: 16px;">Animal Rescue & Welfare</p>
+        </div>
+
+        <!-- Urgency Banner -->
+        <div class="urgency-banner">
+          ${urgencyIcons[userData.urgency]} RESCUE REQUEST CONFIRMED - ${userData.urgency.toUpperCase()}
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+          <!-- Thank You Message -->
+          <div class="thank-you">
+            <h2 style="margin: 0 0 10px 0; font-size: 24px;">Thank You, ${userData.name}!</h2>
+            <p style="margin: 0; opacity: 0.9; font-size: 16px;">
+              Your compassion can save a life. We've received your rescue request and our team is on it.
+            </p>
+          </div>
+
+          <!-- Request Details -->
+          <div class="section">
+            <h3 style="color: #5E4FA2; margin-top: 0; border-bottom: 2px solid #5E4FA2; padding-bottom: 10px; font-size: 20px;">
+              📋 Rescue Request Details
+            </h3>
+            
+            <div class="detail-card">
+              <div class="detail-row">
+                <div class="detail-label">Request ID:</div>
+                <div class="detail-value">
+                  <strong>#RES${Math.random().toString(36).substr(2, 8).toUpperCase()}</strong>
+                </div>
+              </div>
+              
+              <div class="detail-row">
+                <div class="detail-label">Submitted By:</div>
+                <div class="detail-value">${userData.name}</div>
+              </div>
+              
+              <div class="detail-row">
+                <div class="detail-label">Contact Number:</div>
+                <div class="detail-value">
+                  <strong style="color: #5E4FA2;">${userData.phone}</strong>
+                </div>
+              </div>
+              
+              ${userData.email ? `
+              <div class="detail-row">
+                <div class="detail-label">Email Address:</div>
+                <div class="detail-value">${userData.email}</div>
+              </div>
+              ` : ''}
+              
+              <div class="detail-row">
+                <div class="detail-label">Rescue Location:</div>
+                <div class="detail-value">${userData.address}</div>
+              </div>
+              
+              <div class="detail-row">
+                <div class="detail-label">Urgency Level:</div>
+                <div class="detail-value">
+                  <span style="background: ${urgencyColors[userData.urgency]}; color: white; padding: 4px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;">
+                    ${urgencyIcons[userData.urgency]} ${userData.urgency.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+              
+              ${userData.notes ? `
+              <div class="detail-row">
+                <div class="detail-label">Additional Notes:</div>
+                <div class="detail-value" style="font-style: italic;">"${userData.notes}"</div>
+              </div>
+              ` : ''}
+              
+              <div class="detail-row" style="border-bottom: none;">
+                <div class="detail-label">Submission Time:</div>
+                <div class="detail-value">${new Date().toLocaleString('en-IN', { 
+                  timeZone: 'Asia/Kolkata',
+                  dateStyle: 'full', 
+                  timeStyle: 'medium' 
+                })}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency Contact -->
+          <div class="emergency-contact">
+            <h3 style="color: #DC2626; margin-top: 0; font-size: 18px;">🚨 Emergency Rescue Hotline</h3>
+            <p style="color: #DC2626; margin: 10px 0; font-size: 14px;">
+              If the animal's condition worsens or this is a life-threatening emergency, 
+              call our 24/7 rescue hotline immediately:
+            </p>
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="tel:+919136263344" style="background: #DC2626; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-size: 20px; font-weight: bold; display: inline-block;">
+                📞 +91 9136263344
+              </a>
+            </div>
+            <p style="color: #DC2626; margin: 10px 0 0 0; font-size: 12px; text-align: center;">
+              Available 24 hours, 7 days a week for emergency rescues
+            </p>
+          </div>
+
+          <!-- Next Steps -->
+          <div class="next-steps">
+            <h3 style="color: #059669; margin-top: 0; font-size: 18px;">🎯 What Happens Next?</h3>
+            
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <strong style="color: #059669;">Immediate Review</strong>
+                <p style="color: #059669; margin: 5px 0 0 0; font-size: 14px;">
+                  Our rescue team is reviewing your request right now. 
+                  ${userData.urgency === 'emergency' ? 
+                    'For emergency cases, we aim to respond within 30 minutes.' : 
+                  userData.urgency === 'urgent' ? 
+                    'For urgent cases, we aim to respond within 2 hours.' : 
+                    'We will contact you within 4-6 hours during operational hours.'
+                  }
+                </p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <strong style="color: #059669;">Team Dispatch</strong>
+                <p style="color: #059669; margin: 5px 0 0 0; font-size: 14px;">
+                  If rescue is required, our trained team will be dispatched to the location with necessary equipment.
+                </p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <strong style="color: #059669;">On-site Assessment</strong>
+                <p style="color: #059669; margin: 5px 0 0 0; font-size: 14px;">
+                  Our team will assess the animal's condition and provide immediate first aid if needed.
+                </p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <strong style="color: #059669;">Transport & Care</strong>
+                <p style="color: #059669; margin: 5px 0 0 0; font-size: 14px;">
+                  The animal will be safely transported to our shelter for medical care and rehabilitation.
+                </p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">5</div>
+              <div class="step-content">
+                <strong style="color: #059669;">Updates & Follow-up</strong>
+                <p style="color: #059669; margin: 5px 0 0 0; font-size: 14px;">
+                  We'll keep you informed about the animal's progress and recovery journey.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Important Instructions -->
+          <div class="section">
+            <div style="background: #EFF6FF; padding: 20px; border-radius: 8px; border: 1px solid #BFDBFE;">
+              <h4 style="color: #1E40AF; margin-top: 0;">📝 Important Instructions</h4>
+              <ul style="color: #1E40AF; padding-left: 20px; margin: 0;">
+                <li>Please keep your phone ${userData.phone} accessible for our call</li>
+                <li>If possible, stay near the location to guide our rescue team</li>
+                <li>Do not attempt to handle injured or scared animals yourself</li>
+                <li>Keep children and other pets at a safe distance</li>
+                <li>If the animal moves, note the new location and update us</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <p style="margin: 0 0 15px 0;">
+            <strong>Hope Animal Care Rescue Team</strong><br>
+            <span style="color: #5E4FA2;">9 Shastri Nagar, Near Yashodhan School, Thane, Maharashtra 400606</span>
+          </p>
+          <p style="margin: 0 0 10px 0;">
+            📞 <strong>Rescue Hotline:</strong> +91 9136263344 (24/7) | 
+            ✉️ <strong>Email:</strong> info@hopeanimalcare.in
+          </p>
+          <p style="margin: 0; font-size: 11px; color: #A0AEC0;">
+            This is an automated confirmation. Please do not reply to this email.<br>
+            © 2021 Hope Animal Care. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const textBody = `
+ANIMAL RESCUE REQUEST CONFIRMATION - HOPE ANIMAL CARE
+=====================================================
+
+Dear ${userData.name},
+
+Thank you for reporting an animal in need! Your compassion can save a life.
+
+RESCUE REQUEST DETAILS:
+-----------------------
+Request ID: #RES${Math.random().toString(36).substr(2, 8).toUpperCase()}
+Name: ${userData.name}
+Phone: ${userData.phone}
+${userData.email ? `Email: ${userData.email}` : ''}
+Location: ${userData.address}
+Urgency Level: ${userData.urgency.toUpperCase()}
+${userData.notes ? `Notes: ${userData.notes}` : ''}
+Submitted: ${new Date().toLocaleString()}
+
+🚨 EMERGENCY RESCUE HOTLINE:
+----------------------------
+If this is a life-threatening emergency or the animal's condition worsens,
+call our 24/7 rescue hotline immediately: +91 9136263344
+
+WHAT HAPPENS NEXT:
+------------------
+1. Immediate Review: Our team is reviewing your request now
+   - Emergency: Response within 30 minutes
+   - Urgent: Response within 2 hours
+   - Not Urgent: Response within 4-6 hours
+
+2. Team Dispatch: Trained rescuers will be sent if needed
+
+3. On-site Assessment: Animal condition evaluation and first aid
+
+4. Transport & Care: Safe transport to our shelter
+
+5. Updates & Follow-up: We'll keep you informed
+
+IMPORTANT INSTRUCTIONS:
+-----------------------
+• Keep your phone ${userData.phone} accessible
+• Stay near the location if possible to guide our team
+• Do not handle injured/scared animals yourself
+• Keep children and pets at a safe distance
+• Note if the animal moves location
+
+CONTACT INFORMATION:
+--------------------
+Hope Animal Care Rescue Team
+Address: 9 Shastri Nagar, Near Yashodhan School, Thane, Maharashtra 400606
+24/7 Rescue Hotline: +91 9136263344
+Email: info@hopeanimalcare.in
+Website: hopeanimalcare.in
+
+Thank you for helping animals in need! Together we can make a difference.
+
+Best regards,
+Hope Animal Care Rescue Team
+  `;
+
+  return sendEmail({
+    to: userData.email,
     subject,
     text: textBody,
     html: htmlBody,
