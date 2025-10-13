@@ -132,6 +132,8 @@ export default function ReviewsPage() {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+
+  // Validate input
   if (!newReview.name || !newReview.rating || !newReview.comment) {
     setSubmitStatus({
       success: false,
@@ -144,6 +146,18 @@ const handleSubmit = async (e) => {
   setSubmitStatus({ success: false, message: "" });
 
   try {
+    // Step 1: Send email first
+    console.log("Attempting to send email notification...");
+    const emailResult = await sendReviewNotificationEmail({
+      reviewerName: newReview.name,
+      rating: newReview.rating,
+      comment: newReview.comment,
+      date: new Date().toLocaleDateString(),
+    });
+
+    console.log("Email sent successfully:", emailResult);
+
+    // Step 2: Save review only if email succeeds
     const { data, error } = await supabase
       .from("reviews")
       .insert([
@@ -158,6 +172,8 @@ const handleSubmit = async (e) => {
     if (error) throw error;
 
     const addedReview = data[0];
+
+    // Update local state
     setReviews((prev) => [
       {
         id: addedReview.id,
@@ -169,41 +185,36 @@ const handleSubmit = async (e) => {
       ...prev,
     ]);
 
-    // Test email functionality
-    console.log("Attempting to send email notification...");
-    try {
-      const emailResult = await sendReviewNotificationEmail({
-        reviewerName: newReview.name,
-        rating: newReview.rating,
-        comment: newReview.comment,
-        date: new Date().toLocaleDateString()
-      });
-      console.log("Email result:", emailResult);
-    } catch (emailError) {
-      console.error("Email error details:", emailError);
-    }
-
+    // Show success message
     setSubmitStatus({
       success: true,
       message: "Thank you for your review!",
     });
 
+    // Reset form
     setNewReview({
       name: "",
       rating: 0,
       comment: "",
       hoverRating: 0,
     });
+
   } catch (error) {
     console.error("Error submitting review:", error);
+
+    // If email or Supabase insert fails
     setSubmitStatus({
       success: false,
-      message: "Failed to submit review. Please try again.",
+      message:
+        error.message?.includes("email")
+          ? "Failed to send email. Please try again."
+          : "Failed to submit review. Please try again.",
     });
   } finally {
     setIsLoading(false);
   }
 };
+
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) =>
       prev >= Math.ceil(reviews.length / reviewsPerSlide) - 1 ? 0 : prev + 1
@@ -286,7 +297,7 @@ const handleSubmit = async (e) => {
             viewport={{ once: true }}
           >
             <h2 className="text-2xl font-bold text-[#5E4FA2] mb-6">
-              Leave a Review
+              Leave a Reviewsss
             </h2>
 
             {submitStatus.message && (
