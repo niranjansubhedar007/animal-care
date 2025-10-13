@@ -426,7 +426,6 @@ const handleSubmit = async (e) => {
     { id: "subject", label: "Subject", type: "select", required: true, options: [
         { value: "", label: "Select a subject" },
         { value: "Adoption", label: "Adoption Inquiry" },
-        { value: "Volunteer", label: "Volunteer Opportunity" },
         { value: "Donation", label: "Donation Question" },
         { value: "Other", label: "Other" }
       ]

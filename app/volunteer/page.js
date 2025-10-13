@@ -430,14 +430,7 @@ const handleSubmit = async (e) => {
                 variants={fadeIn}
               >
                 {isSubmitting ? "Submitting..." : "Submit"}
-                {isSubmitting && (
-                  <motion.span 
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
-                    <FontAwesomeIcon icon={faHandsHelping} />
-                  </motion.span>
-                )}
+               
               </motion.button>
             </motion.form>
           </motion.div>
