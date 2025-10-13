@@ -89,9 +89,7 @@ Hope Animal Care System
 
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; background: #f9f9f9; border-radius: 8px; padding: 20px; border: 1px solid #ddd;">
-      <div style="text-align: center; margin-bottom: 20px;">
-        <img src="https://dummyimage.com/200x60/5E4FA2/ffffff&text=Hope+Animal+Care" alt="Hope Animal Care" style="max-width: 200px;"/>
-      </div>
+
       <h2 style="color: #5E4FA2; text-align: center; margin-bottom: 20px;">⭐ New Review Received</h2>
       
       <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #A294F9;">
@@ -124,7 +122,7 @@ Hope Animal Care System
 
       <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;"/>
       <p style="color: #999; font-size: 12px; text-align: center;">
-        Hope Animal Care © ${new Date().getFullYear()} <br/>
+        Hope Animal Care © 2021 <br/>
         This is an automated notification. Please do not reply directly to this email.
       </p>
     </div>
