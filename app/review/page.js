@@ -297,7 +297,7 @@ const handleSubmit = async (e) => {
             viewport={{ once: true }}
           >
             <h2 className="text-2xl font-bold text-[#5E4FA2] mb-6">
-              Leave a Review            </h2>
+              Leave a Reviewss            </h2>
 
             {submitStatus.message && (
               <motion.div
