@@ -50,7 +50,7 @@ const About = () => {
   return (
     <>
       <Navbar/>
-      <div className="font-sans overflow-hidden bg-white  ">
+      <div className="font-sans overflow-hidden bg-white">
         {/* Hero Section */}
         <motion.div 
           className="relative h-96 pt-13 flex items-center justify-center text-center"
