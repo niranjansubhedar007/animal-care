@@ -45,20 +45,16 @@ export async function POST(request) {
       from: process.env.SMTP_FROM,
     });
 
-    // ✅ Create transporter for ZeptoMail
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: 587,
-      secure: false, // TLS
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      tls: {
-        ciphers: "SSLv3",
-        rejectUnauthorized: false,
-      },
-    });
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
 
     // Verify SMTP connection
     await transporter.verify();
